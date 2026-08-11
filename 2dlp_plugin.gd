@@ -2,15 +2,17 @@
 extends EditorPlugin
 
 var dock: EditorDock;
+var editor: LowPolyAsset2DEditor;
+var current_asset: LowPolyAsset2D;
 
 
 func _enter_tree() -> void:
-	const DockWindow := preload("res://addons/2dlp/window/2dlp_window.tscn");
+	const EditorWindow := preload("res://addons/2dlp/editor/2dlp_window.tscn");
 	
-	var window := DockWindow.instantiate();
+	editor = EditorWindow.instantiate();
 	
 	dock = EditorDock.new();
-	dock.add_child(window);
+	dock.add_child(editor);
 	
 	dock.name = "2D Low Poly Assets";
 	dock.default_slot = EditorDock.DockSlot.DOCK_SLOT_BOTTOM;
@@ -23,3 +25,16 @@ func _exit_tree() -> void:
 	if dock:
 		remove_dock(dock);
 		dock.queue_free();
+
+
+func _handles(object: Object) -> bool:
+	return object is LowPolyAsset2D;
+
+
+func _edit(object: Object) -> void:
+	if object is LowPolyAsset2D:
+		self.current_asset = object;
+		editor.open_file(object);
+		dock.make_visible();
+	else:
+		self.current_asset = null;

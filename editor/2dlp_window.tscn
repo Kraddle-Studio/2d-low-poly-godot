@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://72x6m0q2vpv8"]
 
+[ext_resource type="Script" uid="uid://454r3ek4xmk3" path="res://addons/2dlp/editor/2dlp_editor.gd" id="1_ieelp"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2gw53"]
 bg_color = Color(0, 0, 0, 0.2)
 corner_radius_top_left = 10
@@ -7,7 +9,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[node name="Window" type="HSplitContainer" unique_id=1839396087]
+[node name="Editor" type="HSplitContainer" unique_id=1839396087]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,6 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 split_offsets = PackedInt32Array(55)
 split_offset = 55
+script = ExtResource("1_ieelp")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=102483414]
 layout_mode = 2
@@ -37,6 +40,13 @@ text = "Files"
 [node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1979477199]
 layout_mode = 2
 
+[node name="FileList" type="ItemList" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1535453819]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+scroll_hint_mode = 1
+tile_scroll_hint = true
+
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=146657831]
 layout_mode = 2
 
@@ -53,3 +63,6 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ToolsPanelContainer" unique_id=1363524560]
 layout_mode = 2
 alignment = 1
+
+[connection signal="item_clicked" from="PanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_clicked"]
+[connection signal="item_selected" from="PanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_selected"]
