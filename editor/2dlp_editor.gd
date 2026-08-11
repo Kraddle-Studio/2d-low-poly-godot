@@ -7,18 +7,29 @@ var files: Array[LowPolyAsset2D];
 var file_map: Dictionary[int, LowPolyAsset2D];
 
 var current_file: LowPolyAsset2D;
+var filter_string: String = "";
 
 
 func open_file(file: LowPolyAsset2D):
-	print(file, files);
 	if not file in files:
-		print("Will add file", file.resource_path.get_file());
 		files.append(file);
-		var index: int = %FileList.add_item(file.resource_path.get_file());
-		%FileList.select(index);
-		file_map.set(index, file);
 	set_file(file);
+	update_file_list();
 
+
+func update_file_list():
+	%FileList.clear();
+	file_map.clear();
+	
+	for file in files:
+		if filter_string != "" and not file.resource_path.contains(filter_string):
+			continue;
+		var index: int = %FileList.add_item(file.resource_path.get_file());
+		%FileList.set_item_tooltip(index, file.resource_path);
+		file_map.set(index, file);
+		
+		if file == self.current_file:
+			%FileList.select(index);
 
 func set_file(file: LowPolyAsset2D):
 	current_file = file;
@@ -54,3 +65,8 @@ func _on_file_list_context(id: int, index: int) -> void:
 				if current_file == file:
 					set_file(null);
 				files.erase(file);
+
+
+func _on_file_filter_text_changed(new_text: String) -> void:
+	filter_string = new_text;
+	update_file_list();

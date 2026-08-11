@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://72x6m0q2vpv8"]
 
 [ext_resource type="Script" uid="uid://454r3ek4xmk3" path="res://addons/2dlp/editor/2dlp_editor.gd" id="1_ieelp"]
+[ext_resource type="Texture2D" uid="uid://barjsstu5n85c" path="res://icon.svg" id="2_q3s4l"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2gw53"]
 bg_color = Color(0, 0, 0, 0.2)
@@ -15,8 +16,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-split_offsets = PackedInt32Array(55)
-split_offset = 55
+split_offsets = PackedInt32Array(300)
+split_offset = 300
 script = ExtResource("1_ieelp")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=102483414]
@@ -33,12 +34,11 @@ theme_override_constants/margin_bottom = 10
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1513387149]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=852693067]
+[node name="FileFilter" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=58346632]
 layout_mode = 2
-text = "Files"
-
-[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1979477199]
-layout_mode = 2
+placeholder_text = "Filter Files"
+right_icon = ExtResource("2_q3s4l")
+icon_expand_mode = 1
 
 [node name="FileList" type="ItemList" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1535453819]
 unique_name_in_owner = true
@@ -50,11 +50,15 @@ tile_scroll_hint = true
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=146657831]
 layout_mode = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="VBoxContainer" unique_id=82087244]
+[node name="RenderViewportContainer" type="SubViewportContainer" parent="VBoxContainer" unique_id=82087244]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 3
+stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="VBoxContainer/SubViewportContainer" unique_id=1757817480]
+[node name="SubViewport" type="SubViewport" parent="VBoxContainer/RenderViewportContainer" unique_id=1757817480]
 handle_input_locally = false
+size = Vector2i(840, 644)
 render_target_update_mode = 4
 
 [node name="ToolsPanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=2135562459]
@@ -64,5 +68,6 @@ layout_mode = 2
 layout_mode = 2
 alignment = 1
 
+[connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/FileFilter" to="." method="_on_file_filter_text_changed"]
 [connection signal="item_clicked" from="PanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_clicked"]
 [connection signal="item_selected" from="PanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_selected"]
