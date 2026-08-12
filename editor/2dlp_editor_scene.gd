@@ -155,7 +155,7 @@ func _process(delta: float) -> void:
 		else:
 			if hover_point == -1:
 				if not selected_points.is_empty():
-					undo_redo.create_action("Unselect points");
+					undo_redo.create_action("Unselect point" if selected_points.size() == 1 else "Unselect points");
 					undo_redo.add_do_property(self, "selected_points", []);
 					undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
 					undo_redo.commit_action(false);
@@ -173,7 +173,22 @@ func _process(delta: float) -> void:
 		file.points.append(get_barycentric_position());
 		undo_redo.add_do_property(file, "points", file.points.duplicate());
 		undo_redo.commit_action(false);
+	
+	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.REMOVE_ACTION) and not selected_points.is_empty():
+		undo_redo.create_action("Remove point" if selected_points.size() == 1 else "Remove points");
+		undo_redo.add_undo_property(file, "points", file.points.duplicate());
+		undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
 		
+		# Remove points in reverse order, so that indices don't change
+		selected_points.sort();
+		selected_points.reverse();
+		for i in range(selected_points.size()):
+			file.points.remove_at(i);
+		selected_points.clear();
+		
+		undo_redo.add_do_property(file, "points", file.points.duplicate());
+		undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+		undo_redo.commit_action(false);
 	
 	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if zoom_input != 0 and mouse_inside:
