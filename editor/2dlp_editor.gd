@@ -21,6 +21,11 @@ func _ready() -> void:
 	
 	self.editor_scene = LowPolyAsset2DEditorScene.new();
 	%RenderViewport.add_child(self.editor_scene);
+	
+	%RenderViewportContainer.gui_input.connect(func (event: InputEvent):
+		if self.editor_scene.handle_input(event):
+			%RenderViewportContainer.accept_event();
+	);
 
 
 func open_file(file: LowPolyAsset2D):

@@ -33,6 +33,18 @@ func _enter_tree() -> void:
 		event.button_index = MOUSE_BUTTON_RIGHT;
 		InputMap.add_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION, event);
+		
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ZOOM_IN_ACTION):
+		var event := InputEventMouseButton.new();
+		event.button_index = MOUSE_BUTTON_WHEEL_UP;
+		InputMap.add_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.ZOOM_IN_ACTION, event);
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ZOOM_OUT_ACTION):
+		var event := InputEventMouseButton.new();
+		event.button_index = MOUSE_BUTTON_WHEEL_DOWN;
+		InputMap.add_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, event);
 
 
 func _exit_tree() -> void:
@@ -41,10 +53,14 @@ func _exit_tree() -> void:
 		dock.queue_free();
 		
 	# Unregister custom actions
-	if InputMap.has_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION):
 		InputMap.erase_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION);
 
 
 func _handles(object: Object) -> bool:

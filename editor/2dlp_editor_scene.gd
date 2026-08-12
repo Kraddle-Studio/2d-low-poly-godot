@@ -1,7 +1,7 @@
 @tool
 
 class_name LowPolyAsset2DEditorScene;
-extends Node;
+extends Control;
 
 
 enum Mode { Select, Pan }
@@ -23,6 +23,10 @@ func _ready() -> void:
 	self.reference_rect_node = ReferenceRect.new();
 	add_child(self.reference_rect_node);
 	self.reference_rect_node.visible = false;
+	
+	var button := Button.new();
+	button.text = "Test";
+	add_child(button);
 
 
 func set_file(file: LowPolyAsset2D) -> void:
@@ -80,6 +84,8 @@ func _process(delta: float) -> void:
 	
 	self.reference_rect_node.size = self.file.size;
 	
+	var mouse_inside := get_viewport().get_visible_rect().has_point(get_viewport().get_mouse_position());
+	
 	if panning:
 		var pan_down: bool = (
 			Input.is_action_pressed(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION) 
@@ -102,13 +108,39 @@ func _process(delta: float) -> void:
 				and right_mouse_panning_allowed()
 		);
 		
-		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
-			print("Left mouse button pressed");
-		if pan_pressed:
-			print("Pan pressed");
-		
-		if pan_pressed and get_viewport().get_visible_rect().has_point(get_viewport().get_mouse_position()):
+		if pan_pressed and mouse_inside:
 			panning = true;
 			self.panning_prev_pos = camera_node.get_local_mouse_position();
 			DisplayServer.cursor_set_shape(DisplayServer.CURSOR_DRAG);
+	
+	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
+	if zoom_input != 0 and mouse_inside:
+		var zoom_factor := 1.0 + zoom_input * LowPoly2DAssetsConstants.ZOOM_SPEED * delta;
+		zoom(zoom_factor);
 		
+
+func handle_input(event: InputEvent) -> bool:
+		
+	if self.file == null:
+		return false;
+
+	var mouse_inside := get_viewport().get_visible_rect().has_point(get_viewport().get_mouse_position());
+	if not mouse_inside:
+		return false;
+
+	if event is InputEventMagnifyGesture:
+		zoom(event.factor);
+		return true;
+	
+	return false;
+
+
+func zoom(factor: float) -> void:
+	var zoom := clamp(camera_node.zoom.x * factor, 0.02, 50.0);
+	var mouse_pos_before_zoom := camera_node.get_local_mouse_position();
+	camera_node.zoom = Vector2(zoom, zoom);
+	var mouse_pos_after_zoom := camera_node.get_local_mouse_position();
+	
+	# Shift camera position to keep mouse position the same
+	camera_node.position += mouse_pos_before_zoom - mouse_pos_after_zoom;
+	
