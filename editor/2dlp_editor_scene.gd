@@ -16,6 +16,8 @@ var panning := false;
 var panning_prev_pos: Vector2;
 
 var show_points: bool = true;
+var hover_point: int = -1;
+var selected_points: Array[int];
 
 
 func _ready() -> void:
@@ -114,6 +116,38 @@ func _process(delta: float) -> void:
 			self.panning_prev_pos = camera_node.get_local_mouse_position();
 			DisplayServer.cursor_set_shape(DisplayServer.CURSOR_DRAG);
 	
+	# Handle point hover
+	hover_point = -1;
+	if not panning and show_points:
+		var closest_point := -1;
+		var closest_dist := 1.0e300;
+		
+		var mouse_pos := camera_node.get_global_mouse_position();
+		for i in range(file.points.size()):
+			var point := file.points[i];
+			var dist := point.distance_squared_to(mouse_pos);
+			
+			if dist < closest_dist:
+				closest_dist = dist;
+				closest_point = i;
+		
+		if closest_dist <= LowPoly2DAssetsConstants.POINT_SELECT_RADIUS * LowPoly2DAssetsConstants.POINT_SELECT_RADIUS:
+			hover_point = closest_point;
+			print(hover_point);
+			
+	if mode == Mode.Select and Input.is_action_just_pressed(LowPoly2DAssetsConstants.SELECT_ACTION) and mouse_inside:
+		if Input.is_key_pressed(KEY_SHIFT):
+			if hover_point != -1:
+				if hover_point in selected_points:
+					selected_points.erase(hover_point);
+				else:
+					selected_points.append(hover_point);
+		else:
+			if hover_point == -1:
+				selected_points.clear();
+			else:
+				selected_points = [hover_point];
+	
 	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if zoom_input != 0 and mouse_inside:
 		var zoom_factor := 1.0 + zoom_input * LowPoly2DAssetsConstants.ZOOM_SPEED * delta;
@@ -153,6 +187,11 @@ func _draw() -> void:
 	if show_points:
 		for i in range(file.points.size()):
 			var point := file.points[i];
-			print("Draw");
-			draw_circle(point, 1, Color.WHITE, true);
-			draw_arc(point, 6, 0, TAU, 32, Color.WHITE, 1, true);
+			var radius := LowPoly2DAssetsConstants.POINT_RENDER_RADIUS;
+			if i == hover_point:
+				radius = LowPoly2DAssetsConstants.POINT_SELECT_RADIUS;
+				draw_circle(point, radius, Color(1, 1, 1, 0.3), true);
+			elif i in selected_points:
+				draw_circle(point, radius, Color.YELLOW, true);
+			draw_circle(point, 0.25 * radius, Color.WHITE, true);
+			draw_arc(point, radius, 0, TAU, 32, Color.WHITE, 1, true);

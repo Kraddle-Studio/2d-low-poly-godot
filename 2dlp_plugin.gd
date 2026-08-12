@@ -45,6 +45,12 @@ func _enter_tree() -> void:
 		event.button_index = MOUSE_BUTTON_WHEEL_DOWN;
 		InputMap.add_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, event);
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.SELECT_ACTION):
+		var event := InputEventMouseButton.new();
+		event.button_index = MOUSE_BUTTON_LEFT;
+		InputMap.add_action(LowPoly2DAssetsConstants.SELECT_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.SELECT_ACTION, event);
 
 
 func _exit_tree() -> void:
@@ -53,6 +59,8 @@ func _exit_tree() -> void:
 		dock.queue_free();
 		
 	# Unregister custom actions
+	if InputMap.has_action(LowPoly2DAssetsConstants.SELECT_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.SELECT_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION):
 		InputMap.erase_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION):
