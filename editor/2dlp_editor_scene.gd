@@ -25,10 +25,6 @@ func _ready() -> void:
 	self.reference_rect_node = ReferenceRect.new();
 	add_child(self.reference_rect_node);
 	self.reference_rect_node.visible = false;
-	
-	var button := Button.new();
-	button.text = "Test";
-	add_child(button);
 
 
 func set_file(file: LowPolyAsset2D) -> void:
