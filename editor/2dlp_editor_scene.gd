@@ -170,7 +170,7 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
 		undo_redo.create_action("Add point");
 		undo_redo.add_undo_property(file, "points", file.points.duplicate());
-		file.points.append(get_barycentric_position());
+		file.points.append(get_cursor_position());
 		undo_redo.add_do_property(file, "points", file.points.duplicate());
 		undo_redo.commit_action(false);
 	
@@ -237,6 +237,10 @@ func _draw() -> void:
 				draw_circle(point, radius, Color.YELLOW, true);
 			draw_circle(point, 0.25 * radius, Color.WHITE, true);
 			draw_arc(point, radius, 0, TAU, 32, Color.WHITE, 1, true);
+
+
+func get_cursor_position() -> Vector2:
+	return get_barycentric_position();
 
 
 func get_barycentric_position() -> Vector2:
