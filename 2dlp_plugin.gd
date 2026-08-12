@@ -10,6 +10,7 @@ func _enter_tree() -> void:
 	const EditorWindow := preload("res://addons/2dlp/editor/2dlp_window.tscn");
 	
 	editor = EditorWindow.instantiate();
+	editor.undo_redo = self.get_undo_redo();
 	
 	dock = EditorDock.new();
 	dock.add_child(editor);

@@ -19,6 +19,8 @@ var show_points: bool = true;
 var hover_point: int = -1;
 var selected_points: Array[int];
 
+var undo_redo: EditorUndoRedoManager;
+
 
 func _ready() -> void:
 	self.camera_node = Camera2D.new();

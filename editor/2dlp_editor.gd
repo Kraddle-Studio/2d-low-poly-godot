@@ -9,6 +9,7 @@ var file_map: Dictionary[int, LowPolyAsset2D];
 var current_file: LowPolyAsset2D;
 var filter_string: String = "";
 
+var undo_redo: EditorUndoRedoManager;
 var editor_scene: LowPolyAsset2DEditorScene;
 
 
@@ -21,6 +22,7 @@ func _ready() -> void:
 	%CenterViewButton.icon = EditorInterface.get_editor_theme().get_icon("CenterView", "EditorIcons");
 	
 	self.editor_scene = LowPolyAsset2DEditorScene.new();
+	self.editor_scene.undo_redo = self.undo_redo;
 	%RenderViewport.add_child(self.editor_scene);
 	
 	%RenderViewportContainer.gui_input.connect(func (event: InputEvent):
