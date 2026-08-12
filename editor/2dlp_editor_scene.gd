@@ -141,14 +141,31 @@ func _process(delta: float) -> void:
 		if Input.is_key_pressed(KEY_SHIFT):
 			if hover_point != -1:
 				if hover_point in selected_points:
+					undo_redo.create_action("Unselect point");
+					undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
 					selected_points.erase(hover_point);
+					undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+					undo_redo.commit_action(false);
 				else:
+					undo_redo.create_action("Select point inclusively");
+					undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
 					selected_points.append(hover_point);
+					undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+					undo_redo.commit_action(false);
 		else:
 			if hover_point == -1:
+				if not selected_points.is_empty():
+					undo_redo.create_action("Unselect points");
+					undo_redo.add_do_property(self, "selected_points", []);
+					undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
+					undo_redo.commit_action(false);
 				selected_points.clear();
 			else:
+				undo_redo.create_action("Select point");
+				undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
 				selected_points = [hover_point];
+				undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+				undo_redo.commit_action(false);
 	
 	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if zoom_input != 0 and mouse_inside:
