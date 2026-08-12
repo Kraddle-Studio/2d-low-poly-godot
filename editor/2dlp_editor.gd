@@ -15,6 +15,9 @@ var editor_scene: LowPolyAsset2DEditorScene;
 func _ready() -> void:
 	%FileFilter.right_icon = EditorInterface.get_editor_theme().get_icon("FilenameFilter", "EditorIcons");
 	%CollapseButton.icon = EditorInterface.get_editor_theme().get_icon("Forward", "EditorIcons");
+	%PanModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolPan", "EditorIcons");
+	%SelectModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolSelect", "EditorIcons");
+	%CenterViewButton.icon = EditorInterface.get_editor_theme().get_icon("CenterView", "EditorIcons");
 	
 	self.editor_scene = LowPolyAsset2DEditorScene.new();
 	%RenderViewport.add_child(self.editor_scene);
@@ -88,3 +91,17 @@ func _on_collapse_button_pressed() -> void:
 	
 	%FilesPanelContainer.visible = collapsed;
 	%CollapseButton.offset_transform_rotation = PI if collapsed else 0; 
+
+
+func _on_center_view_button_pressed() -> void:
+	self.editor_scene.center_camera(true);
+
+
+func _on_select_mode_button_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		self.editor_scene.set_mode(LowPolyAsset2DEditorScene.Mode.Select);
+
+
+func _on_pan_mode_button_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		self.editor_scene.set_mode(LowPolyAsset2DEditorScene.Mode.Pan);

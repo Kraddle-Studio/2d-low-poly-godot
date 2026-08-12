@@ -19,12 +19,32 @@ func _enter_tree() -> void:
 	dock.available_layouts = EditorDock.DOCK_LAYOUT_HORIZONTAL | EditorDock.DOCK_LAYOUT_FLOATING;
 	
 	add_dock(dock);
+	
+	# Register custom actions
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
+		var event := InputEventMouseButton.new();
+		event.button_index = MOUSE_BUTTON_LEFT;
+		InputMap.add_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION, event);
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION):
+		var event := InputEventMouseButton.new();
+		event.button_index = MOUSE_BUTTON_RIGHT;
+		InputMap.add_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION, event);
 
 
 func _exit_tree() -> void:
 	if dock:
 		remove_dock(dock);
 		dock.queue_free();
+		
+	# Unregister custom actions
+	if InputMap.has_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION);
 
 
 func _handles(object: Object) -> bool:
