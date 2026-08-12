@@ -52,6 +52,36 @@ func _enter_tree() -> void:
 		event.button_index = MOUSE_BUTTON_LEFT;
 		InputMap.add_action(LowPoly2DAssetsConstants.SELECT_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.SELECT_ACTION, event);
+		
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ADD_POINT_ACTION):
+		var event := InputEventKey.new();
+		event.key_label = Key.KEY_A;
+		InputMap.add_action(LowPoly2DAssetsConstants.ADD_POINT_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.ADD_POINT_ACTION, event);
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.REMOVE_ACTION):
+		var event := InputEventKey.new();
+		event.key_label = Key.KEY_BACKSPACE;
+		InputMap.add_action(LowPoly2DAssetsConstants.REMOVE_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.REMOVE_ACTION, event);
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.MOVE_ACTION):
+		var event := InputEventKey.new();
+		event.key_label = Key.KEY_M;
+		InputMap.add_action(LowPoly2DAssetsConstants.MOVE_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.MOVE_ACTION, event);
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ROTATE_ACTION):
+		var event := InputEventKey.new();
+		event.key_label = Key.KEY_R;
+		InputMap.add_action(LowPoly2DAssetsConstants.ROTATE_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.ROTATE_ACTION, event);
+	
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.CONFIRM_ACTION):
+		var event := InputEventKey.new();
+		event.key_label = Key.KEY_ENTER;
+		InputMap.add_action(LowPoly2DAssetsConstants.CONFIRM_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.CONFIRM_ACTION, event);
 
 
 func _exit_tree() -> void:
@@ -60,6 +90,16 @@ func _exit_tree() -> void:
 		dock.queue_free();
 		
 	# Unregister custom actions
+	if InputMap.has_action(LowPoly2DAssetsConstants.CONFIRM_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.CONFIRM_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.ROTATE_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.ROTATE_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.MOVE_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.MOVE_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.REMOVE_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.REMOVE_ACTION);
+	if InputMap.has_action(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.ADD_POINT_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.SELECT_ACTION):
 		InputMap.erase_action(LowPoly2DAssetsConstants.SELECT_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION):
