@@ -167,6 +167,14 @@ func _process(delta: float) -> void:
 				undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
 				undo_redo.commit_action(false);
 	
+	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
+		undo_redo.create_action("Add point");
+		undo_redo.add_undo_property(file, "points", file.points.duplicate());
+		file.points.append(get_barycentric_position());
+		undo_redo.add_do_property(file, "points", file.points.duplicate());
+		undo_redo.commit_action(false);
+		
+	
 	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if zoom_input != 0 and mouse_inside:
 		var zoom_factor := 1.0 + zoom_input * LowPoly2DAssetsConstants.ZOOM_SPEED * delta;
@@ -214,3 +222,14 @@ func _draw() -> void:
 				draw_circle(point, radius, Color.YELLOW, true);
 			draw_circle(point, 0.25 * radius, Color.WHITE, true);
 			draw_arc(point, radius, 0, TAU, 32, Color.WHITE, 1, true);
+
+
+func get_barycentric_position() -> Vector2:
+	var total := Vector2.ZERO;
+	
+	for i in range(selected_points.size()):
+		total += file.points[selected_points[i]];
+	if not selected_points.is_empty():
+		total /= selected_points.size();
+	
+	return total;
