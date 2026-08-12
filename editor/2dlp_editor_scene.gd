@@ -1,7 +1,7 @@
 @tool
 
 class_name LowPolyAsset2DEditorScene;
-extends Control;
+extends Node2D;
 
 
 enum Mode { Select, Pan }
@@ -14,6 +14,8 @@ var mode: Mode = Mode.Select;
 
 var panning := false;
 var panning_prev_pos: Vector2;
+
+var show_points: bool = true;
 
 
 func _ready() -> void:
@@ -46,6 +48,7 @@ func set_file(file: LowPolyAsset2D) -> void:
 	self.reference_rect_node.size = self.file.size;
 	
 	center_camera(auto_zoom);
+	queue_redraw();
 
 
 func clean_scene() -> void:
@@ -81,6 +84,8 @@ func right_mouse_panning_allowed() -> bool:
 func _process(delta: float) -> void:
 	if file == null:
 		return;
+	
+	queue_redraw();
 	
 	self.reference_rect_node.size = self.file.size;
 	
@@ -144,3 +149,14 @@ func zoom(factor: float) -> void:
 	# Shift camera position to keep mouse position the same
 	camera_node.position += mouse_pos_before_zoom - mouse_pos_after_zoom;
 	
+
+func _draw() -> void:
+	if file == null:
+		return;
+	
+	if show_points:
+		for i in range(file.points.size()):
+			var point := file.points[i];
+			print("Draw");
+			draw_circle(point, 1, Color.WHITE, true);
+			draw_arc(point, 6, 0, TAU, 32, Color.WHITE, 1, true);

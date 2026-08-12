@@ -17,6 +17,7 @@ func _ready() -> void:
 	%CollapseButton.icon = EditorInterface.get_editor_theme().get_icon("Forward", "EditorIcons");
 	%PanModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolPan", "EditorIcons");
 	%SelectModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolSelect", "EditorIcons");
+	%ShowPointsButton.icon = EditorInterface.get_editor_theme().get_icon("Breakpoint", "EditorIcons");
 	%CenterViewButton.icon = EditorInterface.get_editor_theme().get_icon("CenterView", "EditorIcons");
 	
 	self.editor_scene = LowPolyAsset2DEditorScene.new();
@@ -110,3 +111,7 @@ func _on_select_mode_button_toggled(toggled_on: bool) -> void:
 func _on_pan_mode_button_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		self.editor_scene.set_mode(LowPolyAsset2DEditorScene.Mode.Pan);
+
+
+func _on_show_points_button_toggled(toggled_on: bool) -> void:
+	self.editor_scene.show_points = toggled_on;
