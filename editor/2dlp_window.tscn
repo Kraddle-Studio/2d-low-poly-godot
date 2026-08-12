@@ -10,6 +10,9 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3s4l"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
 [node name="Editor" type="HSplitContainer" unique_id=1839396087]
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,27 +23,29 @@ split_offsets = PackedInt32Array(300)
 split_offset = 300
 script = ExtResource("1_ieelp")
 
-[node name="PanelContainer" type="PanelContainer" parent="." unique_id=102483414]
+[node name="FilesPanelContainer" type="PanelContainer" parent="." unique_id=102483414]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2gw53")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=492682372]
+[node name="MarginContainer" type="MarginContainer" parent="FilesPanelContainer" unique_id=492682372]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1513387149]
+[node name="VBoxContainer" type="VBoxContainer" parent="FilesPanelContainer/MarginContainer" unique_id=1513387149]
 layout_mode = 2
 
-[node name="FileFilter" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=58346632]
+[node name="FileFilter" type="LineEdit" parent="FilesPanelContainer/MarginContainer/VBoxContainer" unique_id=58346632]
+unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Filter Files"
 right_icon = ExtResource("2_q3s4l")
 icon_expand_mode = 1
 
-[node name="FileList" type="ItemList" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1535453819]
+[node name="FileList" type="ItemList" parent="FilesPanelContainer/MarginContainer/VBoxContainer" unique_id=1535453819]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -65,9 +70,18 @@ render_target_update_mode = 4
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ToolsPanelContainer" unique_id=1363524560]
+custom_maximum_size = Vector2(-1, 40)
 layout_mode = 2
-alignment = 1
 
-[connection signal="text_changed" from="PanelContainer/MarginContainer/VBoxContainer/FileFilter" to="." method="_on_file_filter_text_changed"]
-[connection signal="item_clicked" from="PanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_clicked"]
-[connection signal="item_selected" from="PanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_selected"]
+[node name="CollapseButton" type="Button" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=1003643799]
+unique_name_in_owner = true
+layout_mode = 2
+offset_transform_enabled = true
+offset_transform_rotation = 3.1415927
+tooltip_text = "Collapse"
+theme_override_styles/normal = SubResource("StyleBoxFlat_q3s4l")
+
+[connection signal="text_changed" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileFilter" to="." method="_on_file_filter_text_changed"]
+[connection signal="item_clicked" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_clicked"]
+[connection signal="item_selected" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_selected"]
+[connection signal="pressed" from="VBoxContainer/ToolsPanelContainer/HBoxContainer/CollapseButton" to="." method="_on_collapse_button_pressed"]

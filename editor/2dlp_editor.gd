@@ -10,6 +10,11 @@ var current_file: LowPolyAsset2D;
 var filter_string: String = "";
 
 
+func _ready() -> void:
+	%FileFilter.right_icon = EditorInterface.get_editor_theme().get_icon("FilenameFilter", "EditorIcons");
+	%CollapseButton.icon = EditorInterface.get_editor_theme().get_icon("Forward", "EditorIcons");
+
+
 func open_file(file: LowPolyAsset2D):
 	if not file in files:
 		files.append(file);
@@ -70,3 +75,10 @@ func _on_file_list_context(id: int, index: int) -> void:
 func _on_file_filter_text_changed(new_text: String) -> void:
 	filter_string = new_text;
 	update_file_list();
+
+
+func _on_collapse_button_pressed() -> void:
+	var collapsed: bool = not %FilesPanelContainer.is_visible_in_tree();
+	
+	%FilesPanelContainer.visible = collapsed;
+	%CollapseButton.offset_transform_rotation = PI if collapsed else 0; 
