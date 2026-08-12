@@ -9,10 +9,15 @@ var file_map: Dictionary[int, LowPolyAsset2D];
 var current_file: LowPolyAsset2D;
 var filter_string: String = "";
 
+var editor_scene: LowPolyAsset2DEditorScene;
+
 
 func _ready() -> void:
 	%FileFilter.right_icon = EditorInterface.get_editor_theme().get_icon("FilenameFilter", "EditorIcons");
 	%CollapseButton.icon = EditorInterface.get_editor_theme().get_icon("Forward", "EditorIcons");
+	
+	self.editor_scene = LowPolyAsset2DEditorScene.new();
+	%RenderViewport.add_child(self.editor_scene);
 
 
 func open_file(file: LowPolyAsset2D):
@@ -38,6 +43,7 @@ func update_file_list():
 
 func set_file(file: LowPolyAsset2D):
 	current_file = file;
+	editor_scene.set_file(file);
 
 
 func _on_file_list_item_selected(index: int) -> void:

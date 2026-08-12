@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://72x6m0q2vpv8"]
 
 [ext_resource type="Script" uid="uid://454r3ek4xmk3" path="res://addons/2dlp/editor/2dlp_editor.gd" id="1_ieelp"]
-[ext_resource type="Texture2D" uid="uid://barjsstu5n85c" path="res://icon.svg" id="2_q3s4l"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2gw53"]
 bg_color = Color(0, 0, 0, 0.2)
@@ -10,8 +9,30 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="DPITexture" id="DPITexture_ieelp"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><g fill=\"#e0e0e0\"><path d=\"m13.297.714h-13.013a.454.454 0 0 0 -.318.779l4.615 4.507v7.086a.45.45 0 0 0 .738.354l3.511-2.812a.454.454 0 0 0 .17-.354v-4.274l4.614-4.506a.454.454 0 0 0 -.317-.779z\"/><path d=\"m11.085832 14.18196c3.399443 1.97457 6.855925-2.441094 4.074102-5.1815164-2.781825-2.7404217-7.2642008.6646174-5.2597994 4.0134654l-1.9001346 1.871854 1.1856973 1.168051zm1.699723-4.4945981c2.236109 0 2.236109 3.3042441 0 3.3042441-2.236108 0-2.236108-3.3042441 0-3.3042441z\"/></g></svg>
+"
+base_scale = 2.0
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3s4l"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="DPITexture" id="DPITexture_q3s4l"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"8\" height=\"16\"><path fill=\"none\" stroke=\"#e0e0e0\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"m2 2 4 6-4 6\"/></svg>
+"
+base_scale = 2.0
+saturation = 2.0
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
+}
 
 [node name="Editor" type="HSplitContainer" unique_id=1839396087]
 anchors_preset = 15
@@ -42,7 +63,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Filter Files"
-right_icon = ExtResource("2_q3s4l")
+right_icon = SubResource("DPITexture_ieelp")
 icon_expand_mode = 1
 
 [node name="FileList" type="ItemList" parent="FilesPanelContainer/MarginContainer/VBoxContainer" unique_id=1535453819]
@@ -56,14 +77,15 @@ tile_scroll_hint = true
 layout_mode = 2
 
 [node name="RenderViewportContainer" type="SubViewportContainer" parent="VBoxContainer" unique_id=82087244]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 stretch = true
+mouse_target = true
 
-[node name="SubViewport" type="SubViewport" parent="VBoxContainer/RenderViewportContainer" unique_id=1757817480]
+[node name="RenderViewport" type="SubViewport" parent="VBoxContainer/RenderViewportContainer" unique_id=1757817480]
+unique_name_in_owner = true
 handle_input_locally = false
-size = Vector2i(840, 644)
+size = Vector2i(840, 612)
 render_target_update_mode = 4
 
 [node name="ToolsPanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=2135562459]
@@ -80,6 +102,7 @@ offset_transform_enabled = true
 offset_transform_rotation = 3.1415927
 tooltip_text = "Collapse"
 theme_override_styles/normal = SubResource("StyleBoxFlat_q3s4l")
+icon = SubResource("DPITexture_q3s4l")
 
 [connection signal="text_changed" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileFilter" to="." method="_on_file_filter_text_changed"]
 [connection signal="item_clicked" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_clicked"]
