@@ -5,6 +5,7 @@ extends Node2D;
 
 
 enum Mode { Select, Pan, Move, Rotate }
+enum MoveAxis { X = 0, Y = 1, XY }
 	
 var camera_node: Camera2D;
 var reference_rect_node: ReferenceRect;
@@ -25,6 +26,10 @@ var undo_redo: EditorUndoRedoManager;
 
 var rotation_start_pos: Vector2;
 var rotation_angle: float = 0;
+
+var move_start_pos: Vector2;
+var move_delta: Vector2;
+var move_axis: MoveAxis = MoveAxis.XY;
 
 var previous_global_pos: Vector2;
 
@@ -84,6 +89,7 @@ func center_camera(auto_zoom: bool) -> void:
 func set_mode(mode: Mode) -> void:
 	self.mode = mode;
 	self.previous_mode = mode;
+	self.value_input = "";
 		
 
 func left_mouse_panning_allowed() -> bool:
@@ -232,6 +238,34 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.CANCEL_ACTION):
 			mode = previous_mode;
 			value_input = "";
+			
+	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.MOVE_ACTION) and not selected_points.is_empty():
+		if mode in toggle_modes:
+			previous_mode = mode;
+		mode = Mode.Move;
+		move_start_pos = camera_node.get_global_mouse_position() if mouse_inside else get_cursor_position();
+		move_delta = Vector2.ZERO;
+		move_axis = MoveAxis.XY;
+		value_input = "";
+	
+	if mode == Mode.Move:
+		var mouse_pos := camera_node.get_global_mouse_position();
+		if mouse_pos != previous_global_pos:
+			move_delta = mouse_pos - move_start_pos;
+		
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.CONFIRM_ACTION) or Input.is_action_just_pressed(LowPoly2DAssetsConstants.SELECT_ACTION):
+			mode = previous_mode;
+			value_input = "";
+			undo_redo.create_action("Move point" if selected_points.size() == 1 else "Move points");
+			undo_redo.add_undo_property(file, "points", file.points.duplicate());
+			for i in selected_points:
+				file.points[i] = move_position(file.points[i]);
+			undo_redo.add_do_property(file, "points", file.points.duplicate());
+			undo_redo.commit_action(false);
+		
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.CANCEL_ACTION):
+			mode = previous_mode;
+			value_input = "";
 	
 	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if zoom_input != 0 and mouse_inside:
@@ -267,6 +301,12 @@ func handle_input(event: InputEvent) -> bool:
 					value_input += char;
 					update_value_input();
 					return true;
+				
+				elif mode == Mode.Move:
+					if char == "x":
+						move_axis = MoveAxis.X;
+					elif char == "y":
+						move_axis = MoveAxis.Y;
 		
 	return false;
 
@@ -295,6 +335,9 @@ func _draw() -> void:
 					if i in selected_points:
 						var center := get_cursor_position();
 						point = center + (point - center).rotated(rotation_angle);
+				Mode.Move:
+					if i in selected_points:
+						point = move_position(point);
 			
 			if i == hover_point:
 				radius = LowPoly2DAssetsConstants.POINT_SELECT_RADIUS;
@@ -318,6 +361,22 @@ func _draw() -> void:
 		# Draw arc
 		var start_angle := Vector2.RIGHT.angle_to(rotation_start_pos - center);
 		draw_arc(center, LowPoly2DAssetsConstants.ROTATION_INDICATOR_RADIUS, start_angle, start_angle + rotation_angle, 16, Color.LIGHT_GRAY, 1, true);
+	
+	if mode == Mode.Move:
+		var center := get_cursor_position();
+		
+		# Draw move axis if applicable
+		if move_axis == MoveAxis.X:
+			var start := Vector2(0, center.y);
+			var end := Vector2(reference_rect_node.size.x, center.y);
+			draw_line(start, end, Color.RED, 1, true);
+		elif move_axis == MoveAxis.Y:
+			var start := Vector2(center.x, 0);
+			var end := Vector2(center.x, reference_rect_node.size.y);
+			draw_line(start, end, Color.GREEN, 1, true);
+		
+		# Draw delta move
+		draw_line(center, move_position(center), Color.LIGHT_GRAY, 1, true);
 
 
 func get_cursor_position() -> Vector2:
@@ -341,3 +400,21 @@ func update_value_input() -> void:
 				rotation_angle = deg_to_rad(value_input.to_float());
 			else:
 				rotation_angle = 0;
+		Mode.Move:
+			if move_axis == MoveAxis.XY:
+				value_input = "";
+			elif value_input.is_valid_float():
+				move_delta[move_axis] = value_input.to_float();
+			else:
+				move_delta[move_axis] = 0;
+
+
+func move_position(position: Vector2) -> Vector2:
+	match move_axis:
+		MoveAxis.X:
+			return position + Vector2(move_delta.x, 0);
+		MoveAxis.Y:
+			return position + Vector2(0, move_delta.y);
+		MoveAxis.XY:
+			return position + move_delta;
+	return position;
