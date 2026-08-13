@@ -12,6 +12,7 @@ const MOVE_ACTION := "2dlp_move";
 const ROTATE_ACTION := "2dlp_rotate";
 const CONFIRM_ACTION := "2dlp_confirm";
 const CANCEL_ACTION := "2dlp_cancel";
+const LINK_ACTION := "2dlp_link";
 
 const ZOOM_SPEED := 0.5;
 

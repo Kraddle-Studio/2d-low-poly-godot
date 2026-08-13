@@ -92,6 +92,12 @@ func _enter_tree() -> void:
 		InputMap.action_add_event(LowPoly2DAssetsConstants.CANCEL_ACTION, mouse_event);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.CANCEL_ACTION, key_event);
 		
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.LINK_ACTION):
+		var event := InputEventKey.new();
+		event.key_label = Key.KEY_L;
+		InputMap.add_action(LowPoly2DAssetsConstants.LINK_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.LINK_ACTION, event);
+		
 
 
 func _exit_tree() -> void:
@@ -100,6 +106,8 @@ func _exit_tree() -> void:
 		dock.queue_free();
 		
 	# Unregister custom actions
+	if InputMap.has_action(LowPoly2DAssetsConstants.LINK_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.LINK_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.CANCEL_ACTION):
 		InputMap.erase_action(LowPoly2DAssetsConstants.CANCEL_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.CONFIRM_ACTION):

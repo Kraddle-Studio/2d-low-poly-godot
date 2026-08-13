@@ -19,6 +19,8 @@ var panning := false;
 var panning_prev_pos: Vector2;
 
 var show_points: bool = true;
+var show_edges: bool = true;
+var show_polygons: bool = true;
 var hover_point: int = -1;
 var selected_points: Array[int];
 
@@ -209,6 +211,22 @@ func _process(delta: float) -> void:
 			undo_redo.add_do_property(file, "points", file.points.duplicate());
 			undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
 			undo_redo.commit_action(false);
+		
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.LINK_ACTION) and selected_points.size() > 1:
+			undo_redo.create_action("Link points");
+			undo_redo.add_undo_property(file, "edges", file.edges.duplicate_deep());
+			for i in range(1, selected_points.size()):
+				self.file.try_append_edge(selected_points[i - 1], selected_points[i]);
+			
+			if selected_points.size() > 2:
+				self.file.try_append_edge(selected_points[0], selected_points[selected_points.size() - 1]);
+				undo_redo.add_do_property(file, "polygons", file.polygons.duplicate_deep());
+				self.file.try_append_polygon(selected_points, Color.WHITE);
+				undo_redo.add_do_property(file, "polygons", file.polygons.duplicate_deep());
+			
+			undo_redo.add_do_property(file, "edges", file.edges.duplicate_deep());
+			undo_redo.commit_action(false);
+				
 	
 	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.ROTATE_ACTION) and not selected_points.is_empty():
 		if mode in toggle_modes:
@@ -325,19 +343,38 @@ func _draw() -> void:
 	if file == null:
 		return;
 	
+	var points := file.points.duplicate();
+	for i in range(points.size()):
+		var point := points[i];
+
+		match mode:
+			Mode.Rotate:
+				if i in selected_points:
+					var center := get_cursor_position();
+					point = center + (point - center).rotated(rotation_angle);
+			Mode.Move:
+				if i in selected_points:
+					point = move_position(point);
+		points[i] = point;
+		
+	if show_polygons:
+		for polygon in file.polygons:
+			var draw_points := PackedVector2Array();
+			for point in polygon.points:
+				draw_points.append(points[point]);
+			draw_colored_polygon(points, polygon.color);
+
+	if show_edges:
+		for edge in file.edges:
+			var color := Color.LIGHT_GRAY;
+			if edge.a in selected_points and edge.b in selected_points:
+				color = Color.YELLOW;
+			draw_line(points[edge.a], points[edge.b], color, 1, true);
+	
 	if show_points:
-		for i in range(file.points.size()):
-			var point := file.points[i];
+		for i in range(points.size()):
+			var point := points[i];
 			var radius := LowPoly2DAssetsConstants.POINT_RENDER_RADIUS;
-			
-			match mode:
-				Mode.Rotate:
-					if i in selected_points:
-						var center := get_cursor_position();
-						point = center + (point - center).rotated(rotation_angle);
-				Mode.Move:
-					if i in selected_points:
-						point = move_position(point);
 			
 			if i == hover_point:
 				radius = LowPoly2DAssetsConstants.POINT_SELECT_RADIUS;
