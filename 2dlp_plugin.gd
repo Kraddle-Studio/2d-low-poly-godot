@@ -82,6 +82,16 @@ func _enter_tree() -> void:
 		event.key_label = Key.KEY_ENTER;
 		InputMap.add_action(LowPoly2DAssetsConstants.CONFIRM_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.CONFIRM_ACTION, event);
+		
+	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.CANCEL_ACTION):
+		var mouse_event := InputEventMouseButton.new();
+		mouse_event.button_index = MOUSE_BUTTON_RIGHT;
+		var key_event := InputEventKey.new();
+		key_event.key_label = Key.KEY_ESCAPE;
+		InputMap.add_action(LowPoly2DAssetsConstants.CANCEL_ACTION);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.CANCEL_ACTION, mouse_event);
+		InputMap.action_add_event(LowPoly2DAssetsConstants.CANCEL_ACTION, key_event);
+		
 
 
 func _exit_tree() -> void:
@@ -90,6 +100,8 @@ func _exit_tree() -> void:
 		dock.queue_free();
 		
 	# Unregister custom actions
+	if InputMap.has_action(LowPoly2DAssetsConstants.CANCEL_ACTION):
+		InputMap.erase_action(LowPoly2DAssetsConstants.CANCEL_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.CONFIRM_ACTION):
 		InputMap.erase_action(LowPoly2DAssetsConstants.CONFIRM_ACTION);
 	if InputMap.has_action(LowPoly2DAssetsConstants.ROTATE_ACTION):

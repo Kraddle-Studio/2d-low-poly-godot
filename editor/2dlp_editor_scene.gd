@@ -228,6 +228,10 @@ func _process(delta: float) -> void:
 				file.points[i] = center + (file.points[i] - center).rotated(rotation_angle);
 			undo_redo.add_do_property(file, "points", file.points.duplicate());
 			undo_redo.commit_action(false);
+
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.CANCEL_ACTION):
+			mode = previous_mode;
+			value_input = "";
 	
 	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if zoom_input != 0 and mouse_inside:
