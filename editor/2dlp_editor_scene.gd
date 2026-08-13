@@ -331,7 +331,6 @@ func get_barycentric_position() -> Vector2:
 	return total;
 
 func update_value_input() -> void:
-	print(value_input)
 	match mode:
 		Mode.Rotate:
 			if value_input.is_valid_float():

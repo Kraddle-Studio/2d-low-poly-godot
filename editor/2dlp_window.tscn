@@ -148,6 +148,7 @@ anchor_right = 1.0
 offset_top = 20.0
 offset_right = -20.0
 grow_horizontal = 0
+clip_text = true
 
 [node name="ToolsPanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=2135562459]
 layout_mode = 2
