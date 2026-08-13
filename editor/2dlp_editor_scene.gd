@@ -39,7 +39,8 @@ func _ready() -> void:
 	add_child(self.reference_rect_node);
 	self.reference_rect_node.visible = false;
 	
-	self.undo_redo.version_changed.connect(func(): self.mode = self.previous_mode);
+	if self.undo_redo != null:
+		self.undo_redo.version_changed.connect(func(): self.mode = self.previous_mode);
 
 
 func set_file(file: LowPolyAsset2D) -> void:
