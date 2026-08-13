@@ -31,6 +31,10 @@ func _ready() -> void:
 	);
 
 
+func _process(delta: float) -> void:
+	%ValueInputLabel.text = self.editor_scene.value_input;
+
+
 func open_file(file: LowPolyAsset2D):
 	if not file in files:
 		files.append(file);

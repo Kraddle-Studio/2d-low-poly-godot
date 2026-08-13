@@ -4,13 +4,15 @@ class_name LowPolyAsset2DEditorScene;
 extends Node2D;
 
 
-enum Mode { Select, Pan }
+enum Mode { Select, Pan, Move, Rotate }
 	
 var camera_node: Camera2D;
 var reference_rect_node: ReferenceRect;
 
 var file: LowPolyAsset2D;
 var mode: Mode = Mode.Select;
+var previous_mode: Mode;
+const toggle_modes: Array[Mode] = [Mode.Pan, Mode.Select];
 
 var panning := false;
 var panning_prev_pos: Vector2;
@@ -21,6 +23,13 @@ var selected_points: Array[int];
 
 var undo_redo: EditorUndoRedoManager;
 
+var rotation_start_pos: Vector2;
+var rotation_angle: float = 0;
+
+var previous_global_pos: Vector2;
+
+var value_input: String = "";
+
 
 func _ready() -> void:
 	self.camera_node = Camera2D.new();
@@ -29,6 +38,8 @@ func _ready() -> void:
 	self.reference_rect_node = ReferenceRect.new();
 	add_child(self.reference_rect_node);
 	self.reference_rect_node.visible = false;
+	
+	self.undo_redo.version_changed.connect(func(): self.mode = self.previous_mode);
 
 
 func set_file(file: LowPolyAsset2D) -> void:
@@ -71,6 +82,7 @@ func center_camera(auto_zoom: bool) -> void:
 
 func set_mode(mode: Mode) -> void:
 	self.mode = mode;
+	self.previous_mode = mode;
 		
 
 func left_mouse_panning_allowed() -> bool:
@@ -135,7 +147,6 @@ func _process(delta: float) -> void:
 		
 		if closest_dist <= LowPoly2DAssetsConstants.POINT_SELECT_RADIUS * LowPoly2DAssetsConstants.POINT_SELECT_RADIUS:
 			hover_point = closest_point;
-			print(hover_point);
 			
 	if mode == Mode.Select and Input.is_action_just_pressed(LowPoly2DAssetsConstants.SELECT_ACTION) and mouse_inside:
 		if Input.is_key_pressed(KEY_SHIFT):
@@ -167,33 +178,62 @@ func _process(delta: float) -> void:
 				undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
 				undo_redo.commit_action(false);
 	
-	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
-		undo_redo.create_action("Add point");
-		undo_redo.add_undo_property(file, "points", file.points.duplicate());
-		file.points.append(get_cursor_position());
-		undo_redo.add_do_property(file, "points", file.points.duplicate());
-		undo_redo.commit_action(false);
+	# Only allow add and remove when in classic mode, not editing mode
+	if mode in toggle_modes:
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
+			undo_redo.create_action("Add point");
+			undo_redo.add_undo_property(file, "points", file.points.duplicate());
+			file.points.append(get_cursor_position());
+			undo_redo.add_do_property(file, "points", file.points.duplicate());
+			undo_redo.commit_action(false);
+		
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.REMOVE_ACTION) and not selected_points.is_empty():
+			undo_redo.create_action("Remove point" if selected_points.size() == 1 else "Remove points");
+			undo_redo.add_undo_property(file, "points", file.points.duplicate());
+			undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
+			
+			# Remove points in reverse order, so that indices don't change
+			selected_points.sort();
+			selected_points.reverse();
+			for i in range(selected_points.size()):
+				file.points.remove_at(i);
+			selected_points.clear();
+			
+			undo_redo.add_do_property(file, "points", file.points.duplicate());
+			undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+			undo_redo.commit_action(false);
 	
-	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.REMOVE_ACTION) and not selected_points.is_empty():
-		undo_redo.create_action("Remove point" if selected_points.size() == 1 else "Remove points");
-		undo_redo.add_undo_property(file, "points", file.points.duplicate());
-		undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
-		
-		# Remove points in reverse order, so that indices don't change
-		selected_points.sort();
-		selected_points.reverse();
-		for i in range(selected_points.size()):
-			file.points.remove_at(i);
-		selected_points.clear();
-		
-		undo_redo.add_do_property(file, "points", file.points.duplicate());
-		undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
-		undo_redo.commit_action(false);
+	if Input.is_action_just_pressed(LowPoly2DAssetsConstants.ROTATE_ACTION) and not selected_points.is_empty():
+		if mode in toggle_modes:
+			previous_mode = mode;
+		mode = Mode.Rotate;
+		rotation_start_pos = camera_node.get_global_mouse_position();
+		rotation_angle = 0;
+		value_input = "";
+	
+	if mode == Mode.Rotate:
+		var mouse_pos := camera_node.get_global_mouse_position();
+		if mouse_pos != previous_global_pos:
+			var center := get_cursor_position();
+			rotation_angle = (rotation_start_pos - center).angle_to(mouse_pos - center);
+			
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.CONFIRM_ACTION) or Input.is_action_just_pressed(LowPoly2DAssetsConstants.SELECT_ACTION):
+			mode = previous_mode;
+			value_input = "";
+			var center := get_cursor_position();
+			undo_redo.create_action("Rotate point" if selected_points.size() == 1 else "Rotate points");
+			undo_redo.add_undo_property(file, "points", file.points.duplicate());
+			for i in selected_points:
+				file.points[i] = center + (file.points[i] - center).rotated(rotation_angle);
+			undo_redo.add_do_property(file, "points", file.points.duplicate());
+			undo_redo.commit_action(false);
 	
 	var zoom_input := Input.get_axis(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 	if zoom_input != 0 and mouse_inside:
 		var zoom_factor := 1.0 + zoom_input * LowPoly2DAssetsConstants.ZOOM_SPEED * delta;
 		zoom(zoom_factor);
+	
+	previous_global_pos = camera_node.get_global_mouse_position();
 		
 
 func handle_input(event: InputEvent) -> bool:
@@ -209,6 +249,20 @@ func handle_input(event: InputEvent) -> bool:
 		zoom(event.factor);
 		return true;
 	
+	if mode == Mode.Rotate or mode == Mode.Move:
+		if event is InputEventKey and event.is_pressed():
+			if event.keycode == KEY_BACKSPACE and not value_input.is_empty():
+				value_input = value_input.erase(value_input.length() - 1);
+				update_value_input()
+				return true;
+			
+			elif event.unicode != 0:
+				var char := char(event.unicode);
+				if char in "0123456789.-":
+					value_input += char;
+					update_value_input();
+					return true;
+		
 	return false;
 
 
@@ -230,6 +284,13 @@ func _draw() -> void:
 		for i in range(file.points.size()):
 			var point := file.points[i];
 			var radius := LowPoly2DAssetsConstants.POINT_RENDER_RADIUS;
+			
+			match mode:
+				Mode.Rotate:
+					if i in selected_points:
+						var center := get_cursor_position();
+						point = center + (point - center).rotated(rotation_angle);
+			
 			if i == hover_point:
 				radius = LowPoly2DAssetsConstants.POINT_SELECT_RADIUS;
 				draw_circle(point, radius, Color(1, 1, 1, 0.3), true);
@@ -237,6 +298,21 @@ func _draw() -> void:
 				draw_circle(point, radius, Color.YELLOW, true);
 			draw_circle(point, 0.25 * radius, Color.WHITE, true);
 			draw_arc(point, radius, 0, TAU, 32, Color.WHITE, 1, true);
+	
+	if mode == Mode.Rotate:
+		var center := get_cursor_position();
+		
+		# Draw rotation center
+		draw_circle(center, LowPoly2DAssetsConstants.POINT_RENDER_RADIUS * 0.25, Color.BLUE, true);
+		
+		# Draw rotation limits
+		var vector := (rotation_start_pos - center).normalized() * LowPoly2DAssetsConstants.ROTATION_INDICATOR_RADIUS * 1.2;
+		draw_line(center, center + vector, Color.GRAY, 1, true);
+		draw_line(center, center + vector.rotated(rotation_angle), Color.LIGHT_GRAY, 1, true);
+		
+		# Draw arc
+		var start_angle := Vector2.RIGHT.angle_to(rotation_start_pos - center);
+		draw_arc(center, LowPoly2DAssetsConstants.ROTATION_INDICATOR_RADIUS, start_angle, start_angle + rotation_angle, 16, Color.LIGHT_GRAY, 1, true);
 
 
 func get_cursor_position() -> Vector2:
@@ -252,3 +328,12 @@ func get_barycentric_position() -> Vector2:
 		total /= selected_points.size();
 	
 	return total;
+
+func update_value_input() -> void:
+	print(value_input)
+	match mode:
+		Mode.Rotate:
+			if value_input.is_valid_float():
+				rotation_angle = deg_to_rad(value_input.to_float());
+			else:
+				rotation_angle = 0;
