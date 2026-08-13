@@ -12,6 +12,8 @@ var filter_string: String = "";
 var undo_redo: EditorUndoRedoManager;
 var editor_scene: LowPolyAsset2DEditorScene;
 
+const zoom_values := [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4, 8];
+
 
 func _ready() -> void:
 	%FileFilter.right_icon = EditorInterface.get_editor_theme().get_icon("FilenameFilter", "EditorIcons");
@@ -19,6 +21,8 @@ func _ready() -> void:
 	%PanModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolPan", "EditorIcons");
 	%SelectModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolSelect", "EditorIcons");
 	%ShowPointsButton.icon = EditorInterface.get_editor_theme().get_icon("Breakpoint", "EditorIcons");
+	%ZoomOutButton.icon = EditorInterface.get_editor_theme().get_icon("ZoomLess", "EditorIcons");
+	%ZoomInButton.icon = EditorInterface.get_editor_theme().get_icon("ZoomMore", "EditorIcons");
 	%CenterViewButton.icon = EditorInterface.get_editor_theme().get_icon("CenterView", "EditorIcons");
 	
 	self.editor_scene = LowPolyAsset2DEditorScene.new();
@@ -33,6 +37,11 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	%ValueInputLabel.text = self.editor_scene.value_input;
+
+	if self.editor_scene and self.editor_scene.camera_node:
+		var zoom_x := self.editor_scene.camera_node.zoom.x
+		if zoom_x > 0:
+			%ZoomValue.text = "%.0f%%" % (zoom_x * 100)
 
 
 func open_file(file: LowPolyAsset2D):
@@ -121,3 +130,23 @@ func _on_pan_mode_button_toggled(toggled_on: bool) -> void:
 
 func _on_show_points_button_toggled(toggled_on: bool) -> void:
 	self.editor_scene.show_points = toggled_on;
+
+
+func _on_zoom_out_button_pressed() -> void:
+	var zoom_value := self.editor_scene.camera_node.zoom.x;
+	if zoom_value > zoom_values[0]:
+		var values := zoom_values.duplicate();
+		values.reverse();
+		for value in values:
+			if value < zoom_value:
+				self.editor_scene.camera_node.zoom = Vector2(value, value);
+				break;
+
+
+func _on_zoom_in_button_pressed() -> void:
+	var zoom_value := self.editor_scene.camera_node.zoom.x;
+	if zoom_value < zoom_values[zoom_values.size() - 1]:
+		for value in zoom_values:
+			if value > zoom_value:
+				self.editor_scene.camera_node.zoom = Vector2(value, value);
+				break;

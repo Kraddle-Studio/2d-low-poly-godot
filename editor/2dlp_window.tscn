@@ -68,6 +68,28 @@ base_scale = 2.0
 saturation = 2.0
 
 [sub_resource type="DPITexture" id="DPITexture_mqejm"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><circle cx=\"8\" cy=\"8\" r=\"8\" fill-opacity=\".4\"/><path fill=\"#e0e0e0\" d=\"M8 1a7 7 0 0 0 0 14A7 7 0 0 0 8 1zM4 7h8v2H4z\"/></svg>
+"
+base_scale = 2.0
+saturation = 2.0
+
+[sub_resource type="DPITexture" id="DPITexture_bakmu"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><g stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\"><circle cx=\"8\" cy=\"8\" r=\"8\" fill-opacity=\".4\"/><path fill=\"#e0e0e0\" d=\"M8 1a7 7 0 0 0 0 14A7 7 0 0 0 8 1zM7 4h2v3h3v2H9v3H7V9H4V7h3z\"/></g></svg>
+"
+base_scale = 2.0
+saturation = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2v3h7"]
+bg_color = Color(0.6, 0.6, 0.6, 0.14509805)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_420qi"]
+font_size = 20
+
+[sub_resource type="DPITexture" id="DPITexture_65te0"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#fff\" stroke=\"#000\" stroke-linejoin=\"round\" stroke-width=\"1.3\" d=\"M 6.03125 0.96875 L 4.96875 2.03125 L 7.46875 4.53125 A 0.750075 0.750075 0 0 0 8.53125 4.53125 L 11.03125 2.03125 L 9.96875 0.96875 L 8 2.9375 L 6.03125 0.96875 z M 2.03125 4.96875 L 0.96875 6.03125 L 2.9375 8 L 0.96875 9.96875 L 2.03125 11.03125 L 4.53125 8.53125 A 0.750075 0.750075 0 0 0 4.53125 7.46875 L 2.03125 4.96875 z M 13.96875 4.96875 L 11.46875 7.46875 A 0.750075 0.750075 0 0 0 11.46875 8.53125 L 13.96875 11.03125 L 15.03125 9.96875 L 13.0625 8 L 15.03125 6.03125 L 13.96875 4.96875 z M 7.2949219 6.5878906 C 6.9038179 6.5878906 6.5878906 6.9038179 6.5878906 7.2949219 L 6.5878906 8.7050781 C 6.5878906 9.096182 6.9038179 9.4121094 7.2949219 9.4121094 L 8.7050781 9.4121094 C 9.096182 9.4121094 9.4121094 9.096182 9.4121094 8.7050781 L 9.4121094 7.2949219 C 9.4121094 6.9038179 9.096182 6.5878906 8.7050781 6.5878906 L 7.2949219 6.5878906 z M 8 11.248047 A 0.750075 0.750075 0 0 0 7.46875 11.46875 L 4.96875 13.96875 L 6.03125 15.03125 L 8 13.0625 L 9.96875 15.03125 L 11.03125 13.96875 L 8.53125 11.46875 A 0.750075 0.750075 0 0 0 8 11.248047 z\" paint-order=\"stroke markers fill\"/></svg>
 "
 base_scale = 2.0
@@ -214,7 +236,7 @@ icon_alignment = 1
 [node name="VSeparator2" type="VSeparator" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=2037745853]
 layout_mode = 2
 
-[node name="CenterViewButton" type="Button" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=379477602]
+[node name="ZoomOutButton" type="Button" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=870025321]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(48, 48)
 custom_maximum_size = Vector2(48, 48)
@@ -225,6 +247,39 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_c4l77")
 icon = SubResource("DPITexture_mqejm")
 icon_alignment = 1
 
+[node name="ZoomInButton" type="Button" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=1670992937]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+custom_maximum_size = Vector2(48, 48)
+propagate_maximum_size = true
+layout_mode = 2
+tooltip_text = "Center view"
+theme_override_styles/normal = SubResource("StyleBoxFlat_c4l77")
+icon = SubResource("DPITexture_bakmu")
+icon_alignment = 1
+
+[node name="ZoomValue" type="Label" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=914152148]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_2v3h7")
+text = "100%"
+label_settings = SubResource("LabelSettings_420qi")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterViewButton" type="Button" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=379477602]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+custom_maximum_size = Vector2(48, 48)
+propagate_maximum_size = true
+layout_mode = 2
+tooltip_text = "Center view"
+theme_override_styles/normal = SubResource("StyleBoxFlat_c4l77")
+icon = SubResource("DPITexture_65te0")
+icon_alignment = 1
+
 [connection signal="text_changed" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileFilter" to="." method="_on_file_filter_text_changed"]
 [connection signal="item_clicked" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_clicked"]
 [connection signal="item_selected" from="FilesPanelContainer/MarginContainer/VBoxContainer/FileList" to="." method="_on_file_list_item_selected"]
@@ -232,4 +287,6 @@ icon_alignment = 1
 [connection signal="toggled" from="VBoxContainer/ToolsPanelContainer/HBoxContainer/SelectModeButton" to="." method="_on_select_mode_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/ToolsPanelContainer/HBoxContainer/PanModeButton" to="." method="_on_pan_mode_button_toggled"]
 [connection signal="toggled" from="VBoxContainer/ToolsPanelContainer/HBoxContainer/ShowPointsButton" to="." method="_on_show_points_button_toggled"]
+[connection signal="pressed" from="VBoxContainer/ToolsPanelContainer/HBoxContainer/ZoomOutButton" to="." method="_on_zoom_out_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/ToolsPanelContainer/HBoxContainer/ZoomInButton" to="." method="_on_zoom_in_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ToolsPanelContainer/HBoxContainer/CenterViewButton" to="." method="_on_center_view_button_pressed"]
