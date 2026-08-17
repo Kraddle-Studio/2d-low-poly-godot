@@ -220,8 +220,8 @@ func _process(delta: float) -> void:
 			
 			if selected_points.size() > 2:
 				self.file.try_append_edge(selected_points[0], selected_points[selected_points.size() - 1]);
-				undo_redo.add_do_property(file, "polygons", file.polygons.duplicate_deep());
 				self.file.try_append_polygon(selected_points, Color.WHITE);
+				undo_redo.add_undo_property(file, "polygons", file.polygons.duplicate_deep());
 				undo_redo.add_do_property(file, "polygons", file.polygons.duplicate_deep());
 			
 			undo_redo.add_do_property(file, "edges", file.edges.duplicate_deep());
