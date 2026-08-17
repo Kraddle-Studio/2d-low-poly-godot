@@ -21,6 +21,7 @@ var panning_prev_pos: Vector2;
 var show_points: bool = true;
 var show_edges: bool = true;
 var show_polygons: bool = true;
+
 var hover_point: int = -1;
 var selected_points: Array[int];
 
@@ -36,6 +37,8 @@ var move_axis: MoveAxis = MoveAxis.XY;
 var previous_global_pos: Vector2;
 
 var value_input: String = "";
+
+var edit_color: Color;
 
 
 func _ready() -> void:
@@ -220,8 +223,8 @@ func _process(delta: float) -> void:
 			
 			if selected_points.size() > 2:
 				self.file.try_append_edge(selected_points[0], selected_points[selected_points.size() - 1]);
-				self.file.try_append_polygon(selected_points, Color.WHITE);
 				undo_redo.add_undo_property(file, "polygons", file.polygons.duplicate_deep());
+				self.file.try_append_polygon(selected_points, self.edit_color);
 				undo_redo.add_do_property(file, "polygons", file.polygons.duplicate_deep());
 			
 			undo_redo.add_do_property(file, "edges", file.edges.duplicate_deep());

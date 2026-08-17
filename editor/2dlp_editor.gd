@@ -41,7 +41,9 @@ func _process(delta: float) -> void:
 	if self.editor_scene and self.editor_scene.camera_node:
 		var zoom_x := self.editor_scene.camera_node.zoom.x
 		if zoom_x > 0:
-			%ZoomValue.text = "%.0f%%" % (zoom_x * 100)
+			%ZoomValue.text = "%.0f%%" % (zoom_x * 100);
+		
+	self.editor_scene.edit_color = %ColorPickerButton.color;
 
 
 func open_file(file: LowPolyAsset2D):
