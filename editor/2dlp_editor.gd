@@ -21,6 +21,8 @@ func _ready() -> void:
 	%PanModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolPan", "EditorIcons");
 	%SelectModeButton.icon = EditorInterface.get_editor_theme().get_icon("ToolSelect", "EditorIcons");
 	%ShowPointsButton.icon = EditorInterface.get_editor_theme().get_icon("Breakpoint", "EditorIcons");
+	%ShowEdgesButton.icon = EditorInterface.get_editor_theme().get_icon("Line", "EditorIcons");
+	%ShowPolygonsButton.icon = EditorInterface.get_editor_theme().get_icon("PolygonDock", "EditorIcons");
 	%ZoomOutButton.icon = EditorInterface.get_editor_theme().get_icon("ZoomLess", "EditorIcons");
 	%ZoomInButton.icon = EditorInterface.get_editor_theme().get_icon("ZoomMore", "EditorIcons");
 	%CenterViewButton.icon = EditorInterface.get_editor_theme().get_icon("CenterView", "EditorIcons");
@@ -148,6 +150,14 @@ func _on_pan_mode_button_toggled(toggled_on: bool) -> void:
 
 func _on_show_points_button_toggled(toggled_on: bool) -> void:
 	self.editor_scene.show_points = toggled_on;
+
+
+func _on_show_edges_button_toggled(toggled_on: bool) -> void:
+	self.editor_scene.show_edges = toggled_on;
+
+
+func _on_show_polygons_button_toggled(toggled_on: bool) -> void:
+	self.editor_scene.show_polygons = toggled_on;
 
 
 func _on_zoom_out_button_pressed() -> void:
