@@ -90,21 +90,16 @@ func export_svg_to_configured_path() -> void:
 
 func export_collision_scene(path: String) -> Error:
 	var collision_polygons := get_collision_polygons();
-	if collision_polygons.is_empty():
+	if collision_polygons.size() != 1:
 		return ERR_INVALID_DATA;
 
-	var collision_body := StaticBody2D.new();
-	collision_body.name = "LowPolyCollision";
-	for polygon_index in range(collision_polygons.size()):
-		var collision_polygon := CollisionPolygon2D.new();
-		collision_polygon.name = "CollisionPolygon%d" % (polygon_index + 1);
-		collision_polygon.polygon = collision_polygons[polygon_index];
-		collision_body.add_child(collision_polygon);
-		collision_polygon.owner = collision_body;
+	var collision_polygon := CollisionPolygon2D.new();
+	collision_polygon.name = "LowPolyCollision";
+	collision_polygon.polygon = collision_polygons[0];
 
 	var scene := PackedScene.new();
-	var error := scene.pack(collision_body);
-	collision_body.free();
+	var error := scene.pack(collision_polygon);
+	collision_polygon.free();
 	if error != OK:
 		return error;
 	error = ResourceSaver.save(scene, path);
