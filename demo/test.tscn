@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://cymh816py0spc"]
+
+[ext_resource type="PackedScene" uid="uid://8vd5qebb7isy" path="res://demo/heart.tscn" id="1_gamli"]
+
+[node name="Test" type="Node2D" unique_id=364264271]
+
+[node name="Ground" type="Polygon2D" parent="." unique_id=364661288]
+position = Vector2(598, 604)
+polygon = PackedVector2Array(-700, 0, -700, 100, 700, 100, 700, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Ground" unique_id=492190436]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Ground/StaticBody2D" unique_id=661785251]
+polygon = PackedVector2Array(-700, 0, -700, 100, 700, 100, 700, 0)
+
+[node name="Heart" parent="." unique_id=1751867257 instance=ExtResource("1_gamli")]
+position = Vector2(521, 297)
+
+[node name="Heart2" parent="." unique_id=545465161 instance=ExtResource("1_gamli")]
+position = Vector2(606, 94.000015)
+rotation = 1.3897166
+
+[node name="Heart3" parent="." unique_id=791068349 instance=ExtResource("1_gamli")]
+position = Vector2(651, 241)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=142916539]
+position = Vector2(574, 324)
