@@ -17,6 +17,10 @@ var points: PackedVector2Array;
 @export var edges: Array[LowPolyAsset2DEdge];
 @export var polygons: Array[LowPolyAsset2DPolygon];
 
+@export_group("SVG Export")
+@export_custom(PropertyHint.PROPERTY_HINT_SAVE_FILE, "*.svg") var svg_export_path: String = "";
+@export_tool_button("Export SVG", "Save") var export_svg_action: Callable = export_svg_to_configured_path;
+
 
 func try_append_edge(a: int, b: int) -> bool:
 	var new_edge := LowPolyAsset2DEdge.new();
@@ -42,6 +46,38 @@ func try_append_polygon(points: Array[int], color: Color) -> bool:
 	
 	polygons.append(new_polygon);
 	return true;
+
+
+func export_svg(path: String) -> Error:
+	var svg := PackedStringArray([
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+		"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\" viewBox=\"0 0 %d %d\">" % [width, height, width, height],
+	]);
+
+	for polygon in polygons:
+		var polygon_points := PackedStringArray();
+		for point_index in polygon.points:
+			var point := points[point_index];
+			polygon_points.append("%f,%f" % [point.x, point.y]);
+		var opacity := "%.6f" % polygon.color.a;
+		svg.append("<polygon points=\"%s\" fill=\"#%s\" fill-opacity=\"%s\"/>" % [" ".join(polygon_points), polygon.color.to_html(false), opacity]);
+
+	svg.append("</svg>");
+	var file := FileAccess.open(path, FileAccess.WRITE);
+	if file == null:
+		return FileAccess.get_open_error();
+	file.store_string("\n".join(svg));
+	file.close();
+	return OK;
+
+
+func export_svg_to_configured_path() -> void:
+	if svg_export_path.is_empty():
+		push_error("Set an SVG export path before exporting.");
+		return;
+	var error := export_svg(svg_export_path);
+	if error != OK:
+		push_error("Unable to export SVG: %s" % error_string(error));
 
 
 func remove_point(index: int) -> void:
