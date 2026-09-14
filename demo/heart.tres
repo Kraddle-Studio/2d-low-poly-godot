@@ -1,0 +1,101 @@
+[gd_resource type="Resource" script_class="LowPolyAsset2D" format=3 uid="uid://yv4mv0hm667"]
+
+[ext_resource type="Script" uid="uid://du7tvx1gro0ey" path="res://addons/2dlp/asset/2dlp_asset_edge.gd" id="1_os4gw"]
+[ext_resource type="Script" uid="uid://dckljixxeqpsw" path="res://addons/2dlp/asset/2dlp_asset_polygon.gd" id="2_fkyrm"]
+[ext_resource type="Script" uid="uid://cfmfhqalgda1l" path="res://addons/2dlp/asset/2dlp_asset.gd" id="3_1mjt1"]
+
+[sub_resource type="Resource" id="Resource_os4gw"]
+script = ExtResource("1_os4gw")
+a = 1
+b = 2
+
+[sub_resource type="Resource" id="Resource_fkyrm"]
+script = ExtResource("1_os4gw")
+a = 2
+b = 4
+
+[sub_resource type="Resource" id="Resource_1mjt1"]
+script = ExtResource("1_os4gw")
+a = 1
+b = 4
+
+[sub_resource type="Resource" id="Resource_47go4"]
+script = ExtResource("1_os4gw")
+b = 3
+
+[sub_resource type="Resource" id="Resource_lwgmv"]
+script = ExtResource("1_os4gw")
+a = 3
+b = 4
+
+[sub_resource type="Resource" id="Resource_h5us0"]
+script = ExtResource("1_os4gw")
+b = 4
+
+[sub_resource type="Resource" id="Resource_bsfq2"]
+script = ExtResource("1_os4gw")
+a = 2
+b = 3
+
+[sub_resource type="Resource" id="Resource_b4rt0"]
+script = ExtResource("1_os4gw")
+a = 1
+b = 5
+
+[sub_resource type="Resource" id="Resource_h5c4e"]
+script = ExtResource("1_os4gw")
+a = 5
+b = 6
+
+[sub_resource type="Resource" id="Resource_65gmi"]
+script = ExtResource("1_os4gw")
+b = 6
+
+[sub_resource type="Resource" id="Resource_5ym7o"]
+script = ExtResource("1_os4gw")
+a = 6
+b = 4
+
+[sub_resource type="Resource" id="Resource_e2taj"]
+script = ExtResource("1_os4gw")
+a = 4
+b = 5
+
+[sub_resource type="Resource" id="Resource_ld1qr"]
+script = ExtResource("2_fkyrm")
+points = Array[int]([1, 2, 4])
+color = Color(0.9140625, 0.28564453, 0.28564453, 1)
+
+[sub_resource type="Resource" id="Resource_0jlkg"]
+script = ExtResource("2_fkyrm")
+points = Array[int]([0, 3, 4])
+color = Color(1, 0.9140625, 0.9140625, 1)
+
+[sub_resource type="Resource" id="Resource_b4i2h"]
+script = ExtResource("2_fkyrm")
+points = Array[int]([2, 3, 4])
+color = Color(0.99609375, 0.45913696, 0.45913696, 1)
+
+[sub_resource type="Resource" id="Resource_3v2mq"]
+script = ExtResource("2_fkyrm")
+points = Array[int]([0, 6, 4])
+color = Color(0.9902344, 0.3713379, 0.3713379, 1)
+
+[sub_resource type="Resource" id="Resource_6nons"]
+script = ExtResource("2_fkyrm")
+points = Array[int]([1, 4, 5])
+color = Color(0.9999966, 0.43393224, 0.44827777, 1)
+
+[sub_resource type="Resource" id="Resource_unl80"]
+script = ExtResource("2_fkyrm")
+points = Array[int]([4, 5, 6])
+color = Color(1, 0.6499421, 0.6418229, 1)
+
+[resource]
+script = ExtResource("3_1mjt1")
+points = PackedVector2Array(256, 116, 256, 512, 0, 256, 100, 80, 256, 206, 512, 256, 412, 80, 0, 0, 0, 0, 0, 0)
+edges = Array[ExtResource("1_os4gw")]([SubResource("Resource_os4gw"), SubResource("Resource_fkyrm"), SubResource("Resource_1mjt1"), SubResource("Resource_47go4"), SubResource("Resource_lwgmv"), SubResource("Resource_h5us0"), SubResource("Resource_bsfq2"), SubResource("Resource_b4rt0"), SubResource("Resource_h5c4e"), SubResource("Resource_65gmi"), SubResource("Resource_5ym7o"), SubResource("Resource_e2taj")])
+polygons = Array[ExtResource("2_fkyrm")]([SubResource("Resource_ld1qr"), SubResource("Resource_0jlkg"), SubResource("Resource_b4i2h"), SubResource("Resource_3v2mq"), SubResource("Resource_6nons"), SubResource("Resource_unl80")])
+svg_export_path = "res://demo/generated/sprite.svg"
+collision_export_path = "res://demo/generated/collision.tscn"
+metadata/_custom_type_script = "uid://cfmfhqalgda1l"

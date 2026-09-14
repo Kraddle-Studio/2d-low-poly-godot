@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://8vd5qebb7isy"]
+
+[ext_resource type="Texture2D" uid="uid://dokpcqtvk5otj" path="res://demo/generated/sprite.svg" id="1_cixvg"]
+
+[node name="Node2D" type="Sprite2D" unique_id=1751867257]
+texture = ExtResource("1_cixvg")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="." unique_id=949163079]
