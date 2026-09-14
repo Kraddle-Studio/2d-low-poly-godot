@@ -27,6 +27,13 @@ var polygon_draw_points: Array[PackedVector2Array];
 var hover_point: int = -1;
 var selected_points: Array[int];
 
+var selection_drag_active := false;
+var selection_dragging := false;
+var selection_drag_additive := false;
+var selection_drag_start: Vector2;
+var selection_drag_start_mouse_position: Vector2;
+var selection_drag_initial_points: Array[int];
+
 var undo_redo: EditorUndoRedoManager;
 
 var rotation_start_pos: Vector2;
@@ -162,35 +169,23 @@ func _process(delta: float) -> void:
 		if closest_dist <= LowPoly2DAssetsConstants.POINT_SELECT_RADIUS * LowPoly2DAssetsConstants.POINT_SELECT_RADIUS:
 			hover_point = closest_point;
 			
-	if mode == Mode.Select and Input.is_action_just_pressed(LowPoly2DAssetsConstants.SELECT_ACTION) and mouse_inside:
-		if Input.is_key_pressed(KEY_SHIFT):
-			if hover_point != -1:
-				if hover_point in selected_points:
-					undo_redo.create_action("Unselect point");
-					undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
-					selected_points.erase(hover_point);
-					undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
-					undo_redo.commit_action(false);
+	if mode == Mode.Select:
+		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.SELECT_ACTION) and mouse_inside:
+			selection_drag_active = true;
+			selection_dragging = false;
+			selection_drag_additive = Input.is_key_pressed(KEY_SHIFT);
+			selection_drag_start = camera_node.get_global_mouse_position();
+			selection_drag_start_mouse_position = get_viewport().get_mouse_position();
+			selection_drag_initial_points = selected_points.duplicate();
+		elif selection_drag_active:
+			if Input.is_action_pressed(LowPoly2DAssetsConstants.SELECT_ACTION):
+				selection_dragging = selection_dragging or selection_drag_start_mouse_position.distance_to(get_viewport().get_mouse_position()) >= 4.0;
+			elif Input.is_action_just_released(LowPoly2DAssetsConstants.SELECT_ACTION):
+				if selection_dragging:
+					select_points_in_drag_rect();
 				else:
-					undo_redo.create_action("Select point inclusively");
-					undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
-					selected_points.append(hover_point);
-					undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
-					undo_redo.commit_action(false);
-		else:
-			if hover_point == -1:
-				if not selected_points.is_empty():
-					undo_redo.create_action("Unselect point" if selected_points.size() == 1 else "Unselect points");
-					undo_redo.add_do_property(self, "selected_points", []);
-					undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
-					undo_redo.commit_action(false);
-				selected_points.clear();
-			else:
-				undo_redo.create_action("Select point");
-				undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
-				selected_points = [hover_point];
-				undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
-				undo_redo.commit_action(false);
+					select_hover_point(selection_drag_additive);
+				selection_drag_active = false;
 	
 	# Only allow add and remove when in classic mode, not editing mode
 	if mode in toggle_modes:
@@ -301,6 +296,56 @@ func _process(delta: float) -> void:
 	previous_global_pos = camera_node.get_global_mouse_position();
 		
 
+func select_hover_point(additive: bool) -> void:
+	if additive:
+		if hover_point == -1:
+			return;
+		if hover_point in selected_points:
+			undo_redo.create_action("Unselect point");
+			undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
+			selected_points.erase(hover_point);
+			undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+			undo_redo.commit_action(false);
+		else:
+			undo_redo.create_action("Select point inclusively");
+			undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
+			selected_points.append(hover_point);
+			undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+			undo_redo.commit_action(false);
+	elif hover_point == -1:
+		if not selected_points.is_empty():
+			undo_redo.create_action("Unselect point" if selected_points.size() == 1 else "Unselect points");
+			undo_redo.add_do_property(self, "selected_points", []);
+			undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
+			undo_redo.commit_action(false);
+		selected_points.clear();
+	else:
+		undo_redo.create_action("Select point");
+		undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
+		selected_points = [hover_point];
+		undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+		undo_redo.commit_action(false);
+
+
+func select_points_in_drag_rect() -> void:
+	var selection_rect := Rect2(selection_drag_start, camera_node.get_global_mouse_position() - selection_drag_start).abs();
+	var new_selection: Array[int];
+	if selection_drag_additive:
+		new_selection = selected_points.duplicate();
+	for i in range(file.points.size()):
+		if selection_rect.has_point(file.points[i]) and i not in new_selection:
+			new_selection.append(i);
+
+	if new_selection == selected_points:
+		return;
+
+	undo_redo.create_action("Select points");
+	undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
+	selected_points = new_selection;
+	undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
+	undo_redo.commit_action(false);
+
+
 func handle_input(event: InputEvent) -> bool:
 		
 	if self.file == null:
@@ -381,6 +426,11 @@ func _draw() -> void:
 			if edge.a in selected_points and edge.b in selected_points:
 				color = Color.YELLOW;
 			draw_line(points[edge.a], points[edge.b], color, 1, true);
+
+	if selection_drag_active and selection_dragging:
+		var selection_rect := Rect2(selection_drag_start, camera_node.get_global_mouse_position() - selection_drag_start).abs();
+		draw_rect(selection_rect, Color(0.4, 0.7, 1, 0.2), true);
+		draw_rect(selection_rect, Color(0.4, 0.7, 1), false, 1, true);
 	
 	if show_points:
 		for i in range(points.size()):

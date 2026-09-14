@@ -52,7 +52,7 @@ func _process(delta: float) -> void:
 func get_shortcut_help() -> String:
 	match self.editor_scene.mode:
 		LowPolyAsset2DEditorScene.Mode.Select:
-			return "Select\nLeft-click: Select point\nShift + left-click: Add/remove selection\nRight-drag: Pan\nA: Add point\nBackspace: Remove\nL: Link points\nM: Move\nR: Rotate\nMouse wheel: Zoom"
+			return "Select\nLeft-click: Select point\nShift + left-click: Add/remove selection\nLeft-drag: Select points\nShift + left-drag: Add points to selection\nRight-drag: Pan\nA: Add point\nBackspace: Remove\nL: Link points\nM: Move\nR: Rotate\nMouse wheel: Zoom"
 		LowPolyAsset2DEditorScene.Mode.Pan:
 			return "Pan\nLeft-drag: Pan\nRight-drag: Pan\nMouse wheel: Zoom\nA: Add point\nBackspace: Remove\nL: Link points\nM: Move\nR: Rotate"
 		LowPolyAsset2DEditorScene.Mode.Move:
