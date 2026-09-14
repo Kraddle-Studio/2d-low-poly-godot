@@ -20,6 +20,17 @@ Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
 Color(1, 0.8666667, 0.39607844, 1): Color(0.83, 0.78, 0.62, 1)
 }
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shortcut_help"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.6, 0.6, 0.6, 0.14509805)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q3s4l"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
@@ -172,6 +183,20 @@ offset_right = -20.0
 grow_horizontal = 0
 clip_text = true
 
+[node name="ShortcutHelpLabel" type="Label" parent="VBoxContainer/Control" unique_id=694519838]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -230.0
+offset_right = 360.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_shortcut_help")
+text = "Select"
+
 [node name="ToolsPanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=2135562459]
 layout_mode = 2
 
@@ -188,6 +213,16 @@ offset_transform_rotation = 3.1415927
 tooltip_text = "Collapse"
 theme_override_styles/normal = SubResource("StyleBoxFlat_q3s4l")
 icon = SubResource("DPITexture_q3s4l")
+
+[node name="ShowShortcutsButton" type="Button" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=796734472]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+custom_maximum_size = Vector2(48, 48)
+layout_mode = 2
+tooltip_text = "Show shortcuts"
+theme_override_styles/normal = SubResource("StyleBoxFlat_c4l77")
+toggle_mode = true
+text = "?"
 
 [node name="Spacer" type="Control" parent="VBoxContainer/ToolsPanelContainer/HBoxContainer" unique_id=515507592]
 layout_mode = 2

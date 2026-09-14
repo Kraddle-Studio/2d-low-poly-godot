@@ -37,6 +37,9 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	%ValueInputLabel.text = self.editor_scene.value_input;
+	%ShortcutHelpLabel.visible = %ShowShortcutsButton.button_pressed;
+	if %ShortcutHelpLabel.visible:
+		%ShortcutHelpLabel.text = get_shortcut_help();
 
 	if self.editor_scene and self.editor_scene.camera_node:
 		var zoom_x := self.editor_scene.camera_node.zoom.x
@@ -44,6 +47,19 @@ func _process(delta: float) -> void:
 			%ZoomValue.text = "%.0f%%" % (zoom_x * 100);
 		
 	self.editor_scene.edit_color = %ColorPickerButton.color;
+
+
+func get_shortcut_help() -> String:
+	match self.editor_scene.mode:
+		LowPolyAsset2DEditorScene.Mode.Select:
+			return "Select\nLeft-click: Select point\nShift + left-click: Add/remove selection\nRight-drag: Pan\nA: Add point\nBackspace: Remove\nL: Link points\nM: Move\nR: Rotate\nMouse wheel: Zoom"
+		LowPolyAsset2DEditorScene.Mode.Pan:
+			return "Pan\nLeft-drag: Pan\nRight-drag: Pan\nMouse wheel: Zoom\nA: Add point\nBackspace: Remove\nL: Link points\nM: Move\nR: Rotate"
+		LowPolyAsset2DEditorScene.Mode.Move:
+			return "Move\nMouse: Move selection\nX: Constrain horizontal axis\nY: Constrain vertical axis\nNumber: Set axis offset\nEnter: Confirm\nLeft-click: Confirm\nEscape: Cancel\nRight-click: Cancel"
+		LowPolyAsset2DEditorScene.Mode.Rotate:
+			return "Rotate\nMouse: Rotate selection\nNumber: Set degrees\nEnter: Confirm\nLeft-click: Confirm\nEscape: Cancel\nRight-click: Cancel"
+	return ""
 
 
 func open_file(file: LowPolyAsset2D):
