@@ -1,3 +1,5 @@
+@tool
+
 class_name LowPolyAsset2DEdge
 extends Resource
 
