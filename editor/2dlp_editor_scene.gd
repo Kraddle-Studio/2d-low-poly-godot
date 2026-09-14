@@ -22,6 +22,8 @@ var show_points: bool = true;
 var show_edges: bool = true;
 var show_polygons: bool = true;
 
+var polygon_draw_points: Array[PackedVector2Array];
+
 var hover_point: int = -1;
 var selected_points: Array[int];
 
@@ -364,11 +366,14 @@ func _draw() -> void:
 		points[i] = point;
 		
 	if show_polygons:
+		self.polygon_draw_points.clear();
 		for polygon in file.polygons:
 			var draw_points := PackedVector2Array();
 			for point in polygon.points:
 				draw_points.append(points[point]);
 			draw_colored_polygon(points, polygon.color);
+			# Save points array until the next frame, because draw_colored_polygon needs a long-lived array.
+			self.polygon_draw_points.append(draw_points);
 
 	if show_edges:
 		for edge in file.edges:
