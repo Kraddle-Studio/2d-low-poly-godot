@@ -68,6 +68,7 @@ func export_svg(path: String) -> Error:
 		return FileAccess.get_open_error();
 	file.store_string("\n".join(svg));
 	file.close();
+	notify_editor_file_saved(path);
 	return OK;
 
 
@@ -78,6 +79,17 @@ func export_svg_to_configured_path() -> void:
 	var error := export_svg(svg_export_path);
 	if error != OK:
 		push_error("Unable to export SVG: %s" % error_string(error));
+
+
+func notify_editor_file_saved(path: String) -> void:
+	if Engine.is_editor_hint() and path.begins_with("res://"):
+		var filesystem := EditorInterface.get_resource_filesystem();
+		filesystem.update_file(path);
+		if path in EditorInterface.get_open_scenes():
+			EditorInterface.reload_scene_from_path(path);
+			return;
+		if not filesystem.is_scanning() and not filesystem.is_importing():
+			filesystem.scan();
 
 
 func remove_point(index: int) -> void:
