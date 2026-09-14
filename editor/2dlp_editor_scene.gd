@@ -195,7 +195,10 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
 			undo_redo.create_action("Add point");
 			undo_redo.add_undo_property(file, "points", file.points.duplicate());
+			undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
 			file.points.append(get_cursor_position());
+			selected_points = [file.points.size() - 1];
+			undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
 			undo_redo.add_do_property(file, "points", file.points.duplicate());
 			undo_redo.commit_action(false);
 		
