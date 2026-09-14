@@ -124,7 +124,6 @@ func get_collision_polygons() -> Array[PackedVector2Array]:
 
 
 func get_concave_collision_polygons() -> Array[PackedVector2Array]:
-	print("concave mode");
 	var merged_polygons: Array[PackedVector2Array];
 	for asset_polygon in polygons:
 		var pending_polygon := get_asset_polygon_points(asset_polygon);
@@ -136,9 +135,7 @@ func get_concave_collision_polygons() -> Array[PackedVector2Array]:
 			merged = false;
 			for polygon_index in range(merged_polygons.size()):
 				var merge_result := Geometry2D.merge_polygons(merged_polygons[polygon_index], pending_polygon);
-				print("merge result size: %d" % merge_result.size());
 				if merge_result.size() == 1:
-					print(merge_result[0]);
 					pending_polygon = merge_result[0];
 					merged_polygons.remove_at(polygon_index);
 					merged = true;
