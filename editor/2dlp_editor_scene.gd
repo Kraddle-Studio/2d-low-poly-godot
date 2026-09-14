@@ -371,7 +371,7 @@ func _draw() -> void:
 			var draw_points := PackedVector2Array();
 			for point in polygon.points:
 				draw_points.append(points[point]);
-			draw_colored_polygon(points, polygon.color);
+			draw_colored_polygon(draw_points, polygon.color);
 			# Save points array until the next frame, because draw_colored_polygon needs a long-lived array.
 			self.polygon_draw_points.append(draw_points);
 
