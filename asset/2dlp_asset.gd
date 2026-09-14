@@ -3,6 +3,8 @@
 class_name LowPolyAsset2D
 extends Resource
 
+enum CollisionExportMode { Concave, Convex }
+
 @export var width: int = 512;
 @export var height: int = 512;
 
@@ -20,6 +22,11 @@ var points: PackedVector2Array;
 @export_group("SVG Export")
 @export_custom(PropertyHint.PROPERTY_HINT_SAVE_FILE, "*.svg") var svg_export_path: String = "";
 @export_tool_button("Export SVG", "Save") var export_svg_action: Callable = export_svg_to_configured_path;
+
+@export_group("Collision Export")
+@export_custom(PropertyHint.PROPERTY_HINT_SAVE_FILE, "*.tscn") var collision_export_path: String = "";
+@export_enum("Concave", "Convex") var collision_export_mode: int = CollisionExportMode.Concave;
+@export_tool_button("Export Collision", "CollisionPolygon2D") var export_collision_action: Callable = export_collision_to_configured_path;
 
 
 func try_append_edge(a: int, b: int) -> bool:
@@ -79,6 +86,92 @@ func export_svg_to_configured_path() -> void:
 	var error := export_svg(svg_export_path);
 	if error != OK:
 		push_error("Unable to export SVG: %s" % error_string(error));
+
+
+func export_collision_scene(path: String) -> Error:
+	var collision_polygons := get_collision_polygons();
+	if collision_polygons.is_empty():
+		return ERR_INVALID_DATA;
+
+	var collision_body := StaticBody2D.new();
+	collision_body.name = "LowPolyCollision";
+	for polygon_index in range(collision_polygons.size()):
+		var collision_polygon := CollisionPolygon2D.new();
+		collision_polygon.name = "CollisionPolygon%d" % (polygon_index + 1);
+		collision_polygon.polygon = collision_polygons[polygon_index];
+		collision_body.add_child(collision_polygon);
+		collision_polygon.owner = collision_body;
+
+	var scene := PackedScene.new();
+	var error := scene.pack(collision_body);
+	collision_body.free();
+	if error != OK:
+		return error;
+	error = ResourceSaver.save(scene, path);
+	if error == OK:
+		notify_editor_file_saved(path);
+	return error;
+
+
+func export_collision_to_configured_path() -> void:
+	if collision_export_path.is_empty():
+		push_error("Set a collision export path before exporting.");
+		return;
+	var error := export_collision_scene(collision_export_path);
+	if error != OK:
+		push_error("Unable to export collision scene: %s" % error_string(error));
+
+
+func get_collision_polygons() -> Array[PackedVector2Array]:
+	if collision_export_mode == CollisionExportMode.Convex:
+		return get_convex_collision_polygons();
+	return get_concave_collision_polygons();
+
+
+func get_concave_collision_polygons() -> Array[PackedVector2Array]:
+	print("concave mode");
+	var merged_polygons: Array[PackedVector2Array];
+	for asset_polygon in polygons:
+		var pending_polygon := get_asset_polygon_points(asset_polygon);
+		if pending_polygon.size() < 3:
+			continue;
+
+		var merged := true;
+		while merged:
+			merged = false;
+			for polygon_index in range(merged_polygons.size()):
+				var merge_result := Geometry2D.merge_polygons(merged_polygons[polygon_index], pending_polygon);
+				print("merge result size: %d" % merge_result.size());
+				if merge_result.size() == 1:
+					print(merge_result[0]);
+					pending_polygon = merge_result[0];
+					merged_polygons.remove_at(polygon_index);
+					merged = true;
+					break;
+
+		merged_polygons.append(pending_polygon);
+	return merged_polygons;
+
+
+func get_convex_collision_polygons() -> Array[PackedVector2Array]:
+	var polygon_points := PackedVector2Array();
+	for asset_polygon in polygons:
+		polygon_points.append_array(get_asset_polygon_points(asset_polygon));
+
+	var hull := Geometry2D.convex_hull(polygon_points);
+	if hull.size() > 1 and hull[0] == hull[-1]:
+		hull.remove_at(hull.size() - 1);
+	if hull.size() < 3:
+		return [];
+	return [hull];
+
+
+func get_asset_polygon_points(asset_polygon: LowPolyAsset2DPolygon) -> PackedVector2Array:
+	var polygon_points := PackedVector2Array();
+	for point_index in asset_polygon.points:
+		if point_index >= 0 and point_index < points.size():
+			polygon_points.append(points[point_index]);
+	return polygon_points;
 
 
 func notify_editor_file_saved(path: String) -> void:
