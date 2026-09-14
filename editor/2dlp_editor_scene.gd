@@ -202,16 +202,20 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed(LowPoly2DAssetsConstants.REMOVE_ACTION) and not selected_points.is_empty():
 			undo_redo.create_action("Remove point" if selected_points.size() == 1 else "Remove points");
 			undo_redo.add_undo_property(file, "points", file.points.duplicate());
+			undo_redo.add_undo_property(file, "edges", file.edges.duplicate_deep());
+			undo_redo.add_undo_property(file, "polygons", file.polygons.duplicate_deep());
 			undo_redo.add_undo_property(self, "selected_points", selected_points.duplicate());
 			
 			# Remove points in reverse order, so that indices don't change
 			selected_points.sort();
 			selected_points.reverse();
-			for i in range(selected_points.size()):
-				file.points.remove_at(i);
+			for point_index in selected_points:
+				file.remove_point(point_index);
 			selected_points.clear();
 			
 			undo_redo.add_do_property(file, "points", file.points.duplicate());
+			undo_redo.add_do_property(file, "edges", file.edges.duplicate_deep());
+			undo_redo.add_do_property(file, "polygons", file.polygons.duplicate_deep());
 			undo_redo.add_do_property(self, "selected_points", selected_points.duplicate());
 			undo_redo.commit_action(false);
 		

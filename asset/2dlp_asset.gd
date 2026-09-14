@@ -42,3 +42,27 @@ func try_append_polygon(points: Array[int], color: Color) -> bool:
 	
 	polygons.append(new_polygon);
 	return true;
+
+
+func remove_point(index: int) -> void:
+	for edge_index in range(edges.size() - 1, -1, -1):
+		var edge := edges[edge_index];
+		if edge.a == index or edge.b == index:
+			edges.remove_at(edge_index);
+
+	for polygon_index in range(polygons.size() - 1, -1, -1):
+		if index in polygons[polygon_index].points:
+			polygons.remove_at(polygon_index);
+
+	for edge in edges:
+		if edge.a > index:
+			edge.a -= 1;
+		if edge.b > index:
+			edge.b -= 1;
+
+	for polygon in polygons:
+		for point_index in range(polygon.points.size()):
+			if polygon.points[point_index] > index:
+				polygon.points[point_index] -= 1;
+
+	points.remove_at(index);
