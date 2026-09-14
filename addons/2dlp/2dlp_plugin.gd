@@ -4,6 +4,7 @@ extends EditorPlugin
 var dock: EditorDock;
 var editor: LowPolyAsset2DEditor;
 var current_asset: LowPolyAsset2D;
+var created_input_actions: Array[String];
 
 
 func _enter_tree() -> void:
@@ -23,79 +24,91 @@ func _enter_tree() -> void:
 	
 	# Register custom actions
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
 		var event := InputEventMouseButton.new();
 		event.button_index = MOUSE_BUTTON_LEFT;
 		InputMap.add_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION, event);
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION):
 		var event := InputEventMouseButton.new();
 		event.button_index = MOUSE_BUTTON_RIGHT;
 		InputMap.add_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION, event);
 		
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ZOOM_IN_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION):
 		var event := InputEventMouseButton.new();
 		event.button_index = MOUSE_BUTTON_WHEEL_UP;
 		InputMap.add_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.ZOOM_IN_ACTION, event);
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ZOOM_OUT_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION):
 		var event := InputEventMouseButton.new();
 		event.button_index = MOUSE_BUTTON_WHEEL_DOWN;
 		InputMap.add_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION, event);
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.SELECT_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.SELECT_ACTION):
 		var event := InputEventMouseButton.new();
 		event.button_index = MOUSE_BUTTON_LEFT;
 		InputMap.add_action(LowPoly2DAssetsConstants.SELECT_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.SELECT_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.SELECT_ACTION, event);
 		
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ADD_POINT_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
 		var event := InputEventKey.new();
 		event.key_label = Key.KEY_A;
 		InputMap.add_action(LowPoly2DAssetsConstants.ADD_POINT_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.ADD_POINT_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.ADD_POINT_ACTION, event);
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.REMOVE_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.REMOVE_ACTION):
 		var event := InputEventKey.new();
 		event.key_label = Key.KEY_BACKSPACE;
 		InputMap.add_action(LowPoly2DAssetsConstants.REMOVE_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.REMOVE_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.REMOVE_ACTION, event);
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.MOVE_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.MOVE_ACTION):
 		var event := InputEventKey.new();
 		event.key_label = Key.KEY_M;
 		InputMap.add_action(LowPoly2DAssetsConstants.MOVE_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.MOVE_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.MOVE_ACTION, event);
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.ROTATE_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.ROTATE_ACTION):
 		var event := InputEventKey.new();
 		event.key_label = Key.KEY_R;
 		InputMap.add_action(LowPoly2DAssetsConstants.ROTATE_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.ROTATE_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.ROTATE_ACTION, event);
 	
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.CONFIRM_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.CONFIRM_ACTION):
 		var event := InputEventKey.new();
 		event.key_label = Key.KEY_ENTER;
 		InputMap.add_action(LowPoly2DAssetsConstants.CONFIRM_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.CONFIRM_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.CONFIRM_ACTION, event);
 		
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.CANCEL_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.CANCEL_ACTION):
 		var mouse_event := InputEventMouseButton.new();
 		mouse_event.button_index = MOUSE_BUTTON_RIGHT;
 		var key_event := InputEventKey.new();
 		key_event.key_label = Key.KEY_ESCAPE;
 		InputMap.add_action(LowPoly2DAssetsConstants.CANCEL_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.CANCEL_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.CANCEL_ACTION, mouse_event);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.CANCEL_ACTION, key_event);
 		
-	if not ProjectSettings.has_setting("input/" + LowPoly2DAssetsConstants.LINK_ACTION):
+	if not InputMap.has_action(LowPoly2DAssetsConstants.LINK_ACTION):
 		var event := InputEventKey.new();
 		event.key_label = Key.KEY_L;
 		InputMap.add_action(LowPoly2DAssetsConstants.LINK_ACTION);
+		created_input_actions.append(LowPoly2DAssetsConstants.LINK_ACTION);
 		InputMap.action_add_event(LowPoly2DAssetsConstants.LINK_ACTION, event);
 		
 
@@ -106,30 +119,10 @@ func _exit_tree() -> void:
 		dock.queue_free();
 		
 	# Unregister custom actions
-	if InputMap.has_action(LowPoly2DAssetsConstants.LINK_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.LINK_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.CANCEL_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.CANCEL_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.CONFIRM_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.CONFIRM_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.ROTATE_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.ROTATE_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.MOVE_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.MOVE_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.REMOVE_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.REMOVE_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.ADD_POINT_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.ADD_POINT_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.SELECT_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.SELECT_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.ZOOM_OUT_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.ZOOM_IN_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.PAN_RIGHT_CLICK_ACTION);
-	if InputMap.has_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION):
-		InputMap.erase_action(LowPoly2DAssetsConstants.PAN_LEFT_CLICK_ACTION);
+	for action in created_input_actions:
+		if InputMap.has_action(action):
+			InputMap.erase_action(action);
+	created_input_actions.clear();
 
 
 func _handles(object: Object) -> bool:
