@@ -168,9 +168,10 @@ func get_convex_collision_polygons() -> Array[PackedVector2Array]:
 
 func get_asset_polygon_points(asset_polygon: LowPolyAsset2DPolygon) -> PackedVector2Array:
 	var polygon_points := PackedVector2Array();
+	var offset := - self.size * 0.5;
 	for point_index in asset_polygon.points:
 		if point_index >= 0 and point_index < points.size():
-			polygon_points.append(points[point_index]);
+			polygon_points.append(points[point_index] + offset);
 	return polygon_points;
 
 
