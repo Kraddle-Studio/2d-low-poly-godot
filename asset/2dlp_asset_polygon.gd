@@ -8,4 +8,9 @@ extends Resource
 @export var color: Color;
 
 func equals(other: LowPolyAsset2DPolygon) -> bool:
-	return points == other.points;
+	if len(points) != len(other.points):
+		return false;
+	for point in points:
+		if point not in other.points:
+			return false;
+	return true;

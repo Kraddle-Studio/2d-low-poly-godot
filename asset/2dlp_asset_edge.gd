@@ -7,4 +7,4 @@ extends Resource
 @export var b: int;
 
 func equals(other: LowPolyAsset2DEdge) -> bool:
-	return a == other.a and b == other.b;
+	return a == other.a and b == other.b or a == other.b and b == other.a;
