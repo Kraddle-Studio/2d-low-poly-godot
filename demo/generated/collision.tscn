@@ -1,6 +1,4 @@
-[gd_scene format=3 uid="uid://54vxqibdkpfd"]
+[gd_scene format=3 uid="uid://rd0ddtwmpd25"]
 
-[node name="LowPolyCollision" type="StaticBody2D" unique_id=1769991897]
-
-[node name="CollisionPolygon1" type="CollisionPolygon2D" parent="." unique_id=1964619792]
+[node name="LowPolyCollision" type="CollisionPolygon2D" unique_id=1373220133]
 polygon = PackedVector2Array(256, 0, 0, 256, -256, 0, -156, -176, 0, -140, 156, -176)
